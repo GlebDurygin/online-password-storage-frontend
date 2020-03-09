@@ -9,6 +9,7 @@
 @import "src/scss/card-register";
 @import "src/scss/root";
 @import "src/scss/type";
+@import "src/scss/nucleo-icons";
 
 *,
 *::before,
@@ -850,3 +851,223 @@ a:not([href]):not([tabindex]) {
   }
 }
 
+.page-header{
+  .carousel .carousel-indicators{
+    bottom: 60px;
+  }
+
+  .container{
+    color: $white;
+  }
+
+  .title{
+    color: $white;
+  }
+
+  &.header-small{
+    height: 65vh;
+    min-height: 65vh;
+
+    .container{
+      padding-top: 20vh;
+    }
+  }
+}
+
+.page-header{
+  min-height: 100vh;
+  max-height: 999px;
+  padding: 0;
+  color: $white;
+  position: relative;
+  overflow: hidden;
+
+  .page-header-image{
+    position: absolute;
+    background-size: cover;
+    background-position: center center;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  & > .content{
+    margin-top: 11%;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .signup-page & {
+    max-height: fit-content;
+  }
+
+  .content-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: $white;
+    padding: 0 15px;
+    width: 100%;
+    max-width: 880px;
+
+    &.brand {
+      width: 47%;
+    }
+
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+
+  .container{
+    height: 100%;
+    z-index: 1;
+  }
+
+  .category,
+  .description{
+    color: $opacity-8;
+  }
+
+  &.page-header-small{
+    min-height: 60vh;
+    max-height: 440px;
+  }
+
+  &.page-header-mini{
+    min-height: 40vh;
+    max-height: 340px;
+  }
+
+  .title{
+    margin-bottom: 15px;
+  }
+  .title + h4{
+    margin-top: 10px;
+  }
+
+  &.header-filter:after {
+    background: rgba(0,0,0,.5);
+  }
+}
+
+.register-page {
+  background-color: #171941;
+}
+
+.register-page .link {
+  font-size: 10px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.register-page .register-bg {
+  height: 700px;
+  background: linear-gradient(to bottom, transparent 0%, #1f2251 100%);
+  width: 700px;
+  position: relative;
+  right: -600px;
+  top: -750px;
+  border-radius: 20%;
+  transform: rotate(-15deg);
+}
+
+.register-page .square {
+  position: absolute;
+  transition: 0.5s ease-out;
+  border-radius: 2px;
+  background-size: 100%;
+  border-radius: 20%;
+}
+
+.register-page .square-1 {
+  height: 300px;
+  width: 300px;
+  background-image: url("/img/square1.png");
+  top: 175px;
+  right: 150px;
+  opacity: 0.8;
+}
+
+.register-page .square-2 {
+  height: 120px;
+  width: 120px;
+  background-image: url("/img/square2.png");
+  opacity: 0.9;
+  top: 310px;
+  right: 390px;
+}
+
+.register-page .square-3 {
+  width: 200px;
+  height: 200px;
+  background-image: url("/img/square3.png");
+  opacity: 0.3;
+  top: -50px;
+  right: 400px;
+}
+
+.register-page .square-4 {
+  height: 200px;
+  width: 200px;
+  background-image: url("/img/square4.png");
+  right: -50px;
+  top: 525px;
+}
+
+.register-page .square-5 {
+  height: 150px;
+  width: 150px;
+  background-image: url("/img/square5.png");
+  opacity: 0.5;
+  top: 500px;
+  right: 470px;
+}
+
+.register-page .square-6 {
+  height: 70px;
+  width: 70px;
+  background-image: url("/img/square5.png");
+  opacity: 0.9;
+  top: 105px;
+  right: 20px;
+}
+
+.register-page .square-7 {
+  height: 200px;
+  width: 200px;
+  background-image: url("/img/square5.png");
+  left: -100px;
+  top: 100px;
+  opacity: .4;
+}
+
+.register-page .square-8 {
+  height: 100px;
+  width: 100px;
+  background-image: url("/img/square1.png");
+  left: 300px;
+  top: 400px;
+  opacity: .4;
+}
+
+.register-page {
+  background-image: url("/img/dots.png");
+  background-size: contain;
+}
+
+.register-page .squares, .register-page .square, .section.section-signup .squares, .section.section-signup .square {
+  background: #ba54f5;
+  background: -webkit-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
+  background: -o-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
+  background: -moz-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
+  background: linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
+}

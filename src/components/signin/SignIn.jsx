@@ -1,5 +1,5 @@
 import React from "react";
-import './sign-up.scss';
+import './sign-in.scss';
 import classnames from "classnames";
 import {withRouter} from "react-router-dom";
 // reactstrap components
@@ -25,7 +25,7 @@ import {
 //import ExamplesNavbar from "components/Navbars/ExamplesNavbar.jsx";
 //import Footer from "components/Footer/Footer.jsx";
 
-class SignUp extends React.Component {
+class SignIn extends React.Component {
     state = {
         squares1to6: "",
         squares7and8: ""
@@ -90,7 +90,7 @@ class SignUp extends React.Component {
                                                     alt="..."
                                                     src={require("../../img/square-purple-1.png")}
                                                 />
-                                                <CardTitle tag="h4">Sign Up</CardTitle>
+                                                <CardTitle tag="h4">Sign In</CardTitle>
                                             </CardHeader>
                                             <CardBody>
                                                 <Form className="form">
@@ -132,32 +132,11 @@ class SignUp extends React.Component {
                                                             onBlur={e => this.setState({passwordFocus: false})}
                                                         />
                                                     </InputGroup>
-                                                    <InputGroup
-                                                        className={classnames({
-                                                            "input-group-focus": this.state.keywordFocus
-                                                        })}
-                                                    >
-                                                        <InputGroupAddon addonType="prepend">
-                                                            <InputGroupText>
-                                                                <i className="tim-icons icon-alert-circle-exc"/>
-                                                            </InputGroupText>
-                                                        </InputGroupAddon>
-                                                        <Input
-                                                            placeholder="Keyword"
-                                                            type="text"
-                                                            onFocus={e =>
-                                                                this.setState({keywordFocus: true})
-                                                            }
-                                                            onBlur={e =>
-                                                                this.setState({keywordFocus: false})
-                                                            }
-                                                        />
-                                                    </InputGroup>
                                                 </Form>
                                             </CardBody>
                                             <CardFooter>
                                                 <Button className="btn-round" color="primary" size="lg">
-                                                    Sign up
+                                                    Sign in
                                                 </Button>
                                             </CardFooter>
                                         </Card>
@@ -204,4 +183,4 @@ class SignUp extends React.Component {
     }
 }
 
-export default withRouter(SignUp);
+export default withRouter(SignIn);
