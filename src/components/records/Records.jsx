@@ -12,9 +12,15 @@ import {
     CardTitle,
     Col,
     Container,
+    Form,
+    Input,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupText,
     Row,
     Table
 } from "reactstrap";
+import classnames from "classnames";
 
 // core components
 //import ExamplesNavbar from "components/Navbars/ExamplesNavbar.jsx";
@@ -68,7 +74,7 @@ class Records extends React.Component {
                         <div className="content">
                             <Container>
                                 <Row>
-                                    <Col className="offset-lg-0 offset-md-3" lg="5" md="6">
+                                    <Col className="offset-lg-0 offset-md-3 records" lg="5" md="6">
                                         <div
                                             className="square square-7"
                                             id="square7"
@@ -88,70 +94,154 @@ class Records extends React.Component {
                                                 <CardTitle tag="h4">Records</CardTitle>
                                             </CardHeader>
                                             <CardBody>
+                                                <CardImg
+                                                    alt="..."
+                                                    src={require("../../img/square-purple-1.png")}
+                                                    className="user-info"
+                                                />
+                                                <CardTitle tag="h4">User Info</CardTitle>
+                                                <Form className="form">
+                                                    <InputGroup
+                                                        className={classnames({
+                                                            "input-group-focus": this.state.usernameFocus
+                                                        })}
+                                                    >
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText>
+                                                                <i className="tim-icons icon-single-02"/>
+                                                            </InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input
+                                                            placeholder="Username"
+                                                            type="text"
+                                                            onFocus={e =>
+                                                                this.setState({usernameFocus: true})
+                                                            }
+                                                            onBlur={e =>
+                                                                this.setState({usernameFocus: false})
+                                                            }
+                                                        />
+                                                    </InputGroup>
+                                                    <InputGroup
+                                                        className={classnames({
+                                                            "input-group-focus": this.state.passwordFocus
+                                                        })}
+                                                    >
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText>
+                                                                <i className="tim-icons icon-lock-circle"/>
+                                                            </InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input
+                                                            placeholder="Password"
+                                                            type="password"
+                                                            onFocus={e => this.setState({passwordFocus: true})}
+                                                            onBlur={e => this.setState({passwordFocus: false})}
+                                                        />
+                                                    </InputGroup>
+                                                    <InputGroup
+                                                        className={classnames({
+                                                            "input-group-focus": this.state.keywordFocus
+                                                        })}
+                                                    >
+                                                        <InputGroupAddon addonType="prepend">
+                                                            <InputGroupText>
+                                                                <i className="tim-icons icon-alert-circle-exc"/>
+                                                            </InputGroupText>
+                                                        </InputGroupAddon>
+                                                        <Input
+                                                            placeholder="Keyword"
+                                                            type="text"
+                                                            onFocus={e =>
+                                                                this.setState({keywordFocus: true})
+                                                            }
+                                                            onBlur={e =>
+                                                                this.setState({keywordFocus: false})
+                                                            }
+                                                        />
+                                                    </InputGroup>
+                                                </Form>
+                                                <CardImg
+                                                    alt="..."
+                                                    src={require("../../img/square-purple-1.png")}
+                                                    className="records-info"
+                                                />
+                                                <div className="records-table-header">
+                                                    <CardTitle tag="h4">Records</CardTitle>
+                                                    <Button className="add-button" color="primary" type="button">
+                                                        <i className="tim-icons icon-simple-add" />
+                                                    </Button>
+                                                </div>
                                                 <Table className="tablesorter" responsive>
                                                     <thead className="text-primary">
                                                     <tr>
                                                         <th className="header">HEADER</th>
                                                         <th className="header">DATA</th>
                                                         <th className="header">DESCRIPTION</th>
-                                                        <th className="header">EDIT</th>
-                                                        <th className="header">DELETE</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
                                                     <tr>
                                                         <td>BTC</td>
                                                         <td>7.342</td>
-                                                        <td>48,870.75 USD</td>
                                                         <td>
-                                                            <Button className="btn-link" color="info" size="sm">
-                                                                <i className="tim-icons icon-pencil"/>
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <Button className="btn-link" color="danger" size="sm">
-                                                                <i className="tim-icons icon-simple-remove"/>
-                                                            </Button>
+                                                            <div className="last-column">
+                                                                48,870.75 USD
+                                                                <div className="edit-buttons">
+                                                                    <Button className="btn-link"
+                                                                            color="info" size="sm">
+                                                                        <i className="tim-icons icon-pencil"/>
+                                                                    </Button>
+                                                                    <Button className="btn-link"
+                                                                            color="danger" size="sm">
+                                                                        <i className="tim-icons icon-simple-remove"/>
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>ETH</td>
                                                         <td>30.737</td>
-                                                        <td>64,53.30 USD</td>
                                                         <td>
-                                                            <Button className="btn-link" color="info" size="sm">
-                                                                <i className="tim-icons icon-pencil"/>
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <Button className="btn-link" color="danger" size="sm">
-                                                                <i className="tim-icons icon-simple-remove"/>
-                                                            </Button>
+                                                            <div className="last-column">
+                                                                48,870.75 USD
+                                                                <div className="edit-buttons">
+                                                                    <Button className="btn-link"
+                                                                            color="info" size="sm">
+                                                                        <i className="tim-icons icon-pencil"/>
+                                                                    </Button>
+                                                                    <Button className="btn-link"
+                                                                            color="danger" size="sm">
+                                                                        <i className="tim-icons icon-simple-remove"/>
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>XRP</td>
                                                         <td>19.242</td>
-                                                        <td>18,354.96 USD</td>
                                                         <td>
-                                                            <Button className="btn-link" color="info" size="sm">
-                                                                <i className="tim-icons icon-pencil"/>
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <Button className="btn-link" color="danger" size="sm">
-                                                                <i className="tim-icons icon-simple-remove"/>
-                                                            </Button>
+                                                            <div className="last-column">
+                                                                48,870.75 USD
+                                                                <div className="edit-buttons">
+                                                                    <Button className="btn-link"
+                                                                            color="info" size="sm">
+                                                                        <i className="tim-icons icon-pencil"/>
+                                                                    </Button>
+                                                                    <Button className="btn-link"
+                                                                            color="danger" size="sm">
+                                                                        <i className="tim-icons icon-simple-remove"/>
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                     </tbody>
                                                 </Table>
                                             </CardBody>
-                                            <CardFooter>
-                                                <Button className="btn-round" color="primary" size="lg">
-                                                    Add
-                                                </Button>
-                                            </CardFooter>
+                                            <CardFooter/>
                                         </Card>
                                     </Col>
                                 </Row>

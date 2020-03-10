@@ -16,12 +16,72 @@ table {
 }
 
 @media (min-width: 576px) {
-  .offset-md-3 {
-    margin-left: 0;
+  .records {
+    &.offset-md-3 {
+      margin-left: 0;
+    }
+
+    &.col-md-6 {
+      max-width: 100%;
+      flex-basis: auto;
+    }
+  }
+}
+
+.records {
+  & .last-column {
+    display: flex;
+    justify-content: space-between;
+
+    .edit-buttons {
+      white-space: nowrap;
+      align-self: center;
+    }
   }
 
-  .col-md-6 {
-    max-width: 100%;
-    flex-basis: auto;
+  & .card > .card-body .card-title {
+    font-weight: 900;
+    text-transform: lowercase;
+    font-size: x-large;
+    margin-left: -5px;
+    color: $black;
+  }
+
+  & .card-body .user-info {
+    z-index: -1;
+
+    top: 25%;
+
+    margin-left: 0;
+    margin-top: 2px;
+
+    width: 135px;
+    height: 40px;
+  }
+
+  & .card-body .records-info {
+    z-index: -1;
+
+    top: 52%;
+
+    margin-left: 0;
+    margin-top: 5px;
+
+    width: 120px;
+    height: 40px;
+  }
+
+  & .table-responsive {
+    padding-bottom: 0;
+  }
+
+  & .records-table-header {
+    height: 34px;
+  }
+
+  & .add-button {
+    top: -52px;
+    margin-left: 130px;
+    padding: 12px;
   }
 }
