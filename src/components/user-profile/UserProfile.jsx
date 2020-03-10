@@ -1,5 +1,5 @@
 import React from "react";
-import './records.scss';
+import './user-profile.scss';
 import {withRouter} from "react-router-dom";
 // reactstrap components
 import {
@@ -13,23 +13,26 @@ import {
     Col,
     Container,
     Form,
+    FormGroup,
     Input,
     InputGroup,
     InputGroupAddon,
     InputGroupText,
+    Modal,
     Row,
-    Table
+    Table,
+    UncontrolledTooltip
 } from "reactstrap";
 import classnames from "classnames";
 
-// core components
-//import ExamplesNavbar from "components/Navbars/ExamplesNavbar.jsx";
-//import Footer from "components/Footer/Footer.jsx";
+import HeaderNavbar from "../header-navbar/HeaderNavbar";
 
-class Records extends React.Component {
+class UserProfile extends React.Component {
     state = {
         squares1to6: "",
-        squares7and8: ""
+        squares7and8: "",
+        recordModal: false,
+        deleteModal: false
     };
 
     componentDidMount() {
@@ -64,10 +67,16 @@ class Records extends React.Component {
         });
     };
 
+    toggleModal = modalState => {
+        this.setState({
+            [modalState]: !this.state[modalState]
+        });
+    };
+
     render() {
         return (
             <>
-                {/*<ExamplesNavbar />*/}
+                <HeaderNavbar/>
                 <div className="wrapper">
                     <div className="page-header">
                         <div className="page-header-image"/>
@@ -86,12 +95,12 @@ class Records extends React.Component {
                                             style={{transform: this.state.squares7and8}}
                                         />
                                         <Card className="card-register">
-                                            <CardHeader>
+                                            <CardHeader className="records-title">
                                                 <CardImg
                                                     alt="..."
                                                     src={require("../../img/square-purple-1.png")}
                                                 />
-                                                <CardTitle tag="h4">Records</CardTitle>
+                                                <CardTitle tag="h4">User profile</CardTitle>
                                             </CardHeader>
                                             <CardBody>
                                                 <CardImg
@@ -168,9 +177,18 @@ class Records extends React.Component {
                                                 />
                                                 <div className="records-table-header">
                                                     <CardTitle tag="h4">Records</CardTitle>
-                                                    <Button className="add-button" color="primary" type="button">
-                                                        <i className="tim-icons icon-simple-add" />
+                                                    <Button id="add-btn" className="add-button btn-tooltip"
+                                                            color="primary" type="button"
+                                                            onClick={() => this.toggleModal("recordModal")}>
+                                                        <i className="tim-icons icon-simple-add"/>
                                                     </Button>
+                                                    <UncontrolledTooltip
+                                                        delay={0}
+                                                        placement="top"
+                                                        target="add-btn"
+                                                    >
+                                                        Add record
+                                                    </UncontrolledTooltip>
                                                 </div>
                                                 <Table className="tablesorter" responsive>
                                                     <thead className="text-primary">
@@ -188,14 +206,27 @@ class Records extends React.Component {
                                                             <div className="last-column">
                                                                 48,870.75 USD
                                                                 <div className="edit-buttons">
-                                                                    <Button className="btn-link"
-                                                                            color="info" size="sm">
+                                                                    <Button id="edit-btn-1"
+                                                                            className="btn-link"
+                                                                            color="info" size="sm"
+                                                                            onClick={() => this.toggleModal("recordModal")}>
                                                                         <i className="tim-icons icon-pencil"/>
                                                                     </Button>
-                                                                    <Button className="btn-link"
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="edit-btn-1">
+                                                                        Edit record
+                                                                    </UncontrolledTooltip>
+                                                                    <Button id="delete-btn-1"
+                                                                            className="btn-link"
                                                                             color="danger" size="sm">
                                                                         <i className="tim-icons icon-simple-remove"/>
                                                                     </Button>
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="delete-btn-1">
+                                                                        Delete record
+                                                                    </UncontrolledTooltip>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -207,14 +238,27 @@ class Records extends React.Component {
                                                             <div className="last-column">
                                                                 48,870.75 USD
                                                                 <div className="edit-buttons">
-                                                                    <Button className="btn-link"
-                                                                            color="info" size="sm">
+                                                                    <Button id="edit-btn-2"
+                                                                            className="btn-link"
+                                                                            color="info" size="sm"
+                                                                            onClick={() => this.toggleModal("recordModal")}>
                                                                         <i className="tim-icons icon-pencil"/>
                                                                     </Button>
-                                                                    <Button className="btn-link"
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="edit-btn-2">
+                                                                        Edit record
+                                                                    </UncontrolledTooltip>
+                                                                    <Button id="delete-btn-2"
+                                                                            className="btn-link"
                                                                             color="danger" size="sm">
                                                                         <i className="tim-icons icon-simple-remove"/>
                                                                     </Button>
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="delete-btn-2">
+                                                                        Delete record
+                                                                    </UncontrolledTooltip>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -226,14 +270,27 @@ class Records extends React.Component {
                                                             <div className="last-column">
                                                                 48,870.75 USD
                                                                 <div className="edit-buttons">
-                                                                    <Button className="btn-link"
-                                                                            color="info" size="sm">
+                                                                    <Button id="edit-btn-3"
+                                                                            className="btn-link"
+                                                                            color="info" size="sm"
+                                                                            onClick={() => this.toggleModal("recordModal")}>
                                                                         <i className="tim-icons icon-pencil"/>
                                                                     </Button>
-                                                                    <Button className="btn-link"
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="edit-btn-3">
+                                                                        Edit record
+                                                                    </UncontrolledTooltip>
+                                                                    <Button id="delete-btn-3"
+                                                                            className="btn-link"
                                                                             color="danger" size="sm">
                                                                         <i className="tim-icons icon-simple-remove"/>
                                                                     </Button>
+                                                                    <UncontrolledTooltip
+                                                                        placement="top"
+                                                                        target="delete-btn-3">
+                                                                        Delete record
+                                                                    </UncontrolledTooltip>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -281,9 +338,91 @@ class Records extends React.Component {
                     </div>
                     {/*<Footer />*/}
                 </div>
+
+                <Modal
+                    modalClassName="modal-black"
+                    isOpen={this.state.recordModal}
+                    toggle={() => this.toggleModal("recordModal")}>
+                    <div className="modal-header justify-content-center">
+                        <button className="close"
+                                onClick={() => this.toggleModal("recordModal")}>
+                            <i className="tim-icons icon-simple-remove text-white"/>
+                        </button>
+                        <div className="text-muted text-center ml-auto mr-auto">
+                            <h3 className="mb-0">Add record</h3>
+                        </div>
+                    </div>
+                    <div className="modal-body">
+                        <Form role="form">
+                            <FormGroup className="mb-3">
+                                <InputGroup
+                                    className={classnames("input-group-alternative", {
+                                        "input-group-focus": this.state.headerModalFocus
+                                    })}
+                                >
+                                    <InputGroupAddon addonType="prepend">
+                                        <InputGroupText>
+                                            <i className="tim-icons icon-tag"/>
+                                        </InputGroupText>
+                                    </InputGroupAddon>
+                                    <Input
+                                        placeholder="Header"
+                                        type="text"
+                                        onFocus={e => this.setState({headerModalFocus: true})}
+                                        onBlur={e => this.setState({headerModalFocus: false})}
+                                    />
+                                </InputGroup>
+                            </FormGroup>
+                            <FormGroup className="mb-3">
+                                <InputGroup
+                                    className={classnames("input-group-alternative", {
+                                        "input-group-focus": this.state.descriptionModalFocus
+                                    })}
+                                >
+                                    <InputGroupAddon addonType="prepend">
+                                        <InputGroupText>
+                                            <i className="tim-icons icon-notes"/>
+                                        </InputGroupText>
+                                    </InputGroupAddon>
+                                    <Input
+                                        placeholder="Description"
+                                        type="text"
+                                        onFocus={e => this.setState({descriptionModalFocus: true})}
+                                        onBlur={e => this.setState({descriptionModalFocus: false})}
+                                    />
+                                </InputGroup>
+                            </FormGroup>
+                            <FormGroup>
+                                <InputGroup
+                                    className={classnames("input-group-alternative", {
+                                        "input-group-focus": this.state.passwordModalFocus
+                                    })}
+                                >
+                                    <InputGroupAddon addonType="prepend">
+                                        <InputGroupText>
+                                            <i className="tim-icons icon-key-25"/>
+                                        </InputGroupText>
+                                    </InputGroupAddon>
+                                    <Input
+                                        placeholder="Password"
+                                        type="text"
+                                        onFocus={e => this.setState({passwordModalFocus: true})}
+                                        onBlur={e => this.setState({passwordModalFocus: false})}
+                                    />
+                                </InputGroup>
+                            </FormGroup>
+                            <div className="text-center">
+                                <Button className="btn-round" color="primary"
+                                        type="button" size="lg">
+                                    Add record
+                                </Button>
+                            </div>
+                        </Form>
+                    </div>
+                </Modal>
             </>
         );
     }
 }
 
-export default withRouter(Records);
+export default withRouter(UserProfile);

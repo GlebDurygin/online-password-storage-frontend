@@ -20,10 +20,7 @@ import {
     InputGroupText,
     Row
 } from "reactstrap";
-
-// core components
-//import ExamplesNavbar from "components/Navbars/ExamplesNavbar.jsx";
-//import Footer from "components/Footer/Footer.jsx";
+import HeaderNavbar from "../header-navbar/HeaderNavbar";
 
 class SignUp extends React.Component {
     state = {
@@ -66,7 +63,7 @@ class SignUp extends React.Component {
     render() {
         return (
             <>
-                {/*<ExamplesNavbar />*/}
+                <HeaderNavbar/>
                 <div className="wrapper">
                     <div className="page-header">
                         <div className="page-header-image"/>
@@ -85,7 +82,7 @@ class SignUp extends React.Component {
                                             style={{transform: this.state.squares7and8}}
                                         />
                                         <Card className="card-register">
-                                            <CardHeader>
+                                            <CardHeader className="sign-up-title">
                                                 <CardImg
                                                     alt="..."
                                                     src={require("../../img/square-purple-1.png")}

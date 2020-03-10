@@ -4,6 +4,9 @@
 @import "src/scss/buttons";
 @import "src/scss/dropdown";
 @import "src/scss/tables";
+@import "src/scss/modal";
+@import "src/scss/navbar";
+@import "src/scss/tooltip";
 @import "src/scss/variables";
 @import "src/scss/functions";
 @import "src/scss/card";
@@ -877,7 +880,7 @@ a:not([href]):not([tabindex]) {
 
 .page-header{
   min-height: 100vh;
-  max-height: 999px;
+  max-height: 100vh;
   padding: 0;
   color: $white;
   position: relative;
@@ -1072,3 +1075,90 @@ a:not([href]):not([tabindex]) {
   background: -moz-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
   background: linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
 }
+
+.navbar {
+  padding: 0.9375rem;
+  width: 100%;
+  z-index: 1050;
+  background: #e14eca; }
+.navbar .photo {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  vertical-align: middle;
+  overflow: hidden; }
+.navbar .photo img {
+  width: 100%; }
+.navbar .navbar-nav .nav-item .nav-link {
+  position: relative;
+  color: inherit;
+  line-height: 20px;
+  display: inline-flex; }
+.navbar .navbar-nav .nav-item .nav-link:hover {
+  color: rgba(255, 255, 255, 0.8); }
+.navbar .navbar-wrapper {
+  display: flex;
+  align-items: center; }
+.navbar .navbar-text {
+  color: #ffffff; }
+.navbar .btn {
+  margin: 0 5px 0 10px; }
+.navbar p {
+  margin: 0; }
+.navbar.navbar-absolute {
+  position: absolute;
+  z-index: 1050; }
+.navbar.navbar-transparent {
+  background: transparent !important;
+  padding-top: 25px; }
+.navbar.bg-white .navbar-nav .search-bar.input-group i {
+  color: #222a42; }
+.navbar.bg-white .navbar-nav .search-bar.input-group .form-control {
+  background: rgba(34, 42, 66, 0.1);
+  border-radius: 4px; }
+.navbar.bg-white .navbar-nav a.nav-link {
+  color: #222a42 !important; }
+.navbar.bg-white .navbar-nav a.nav-link p {
+  color: #222a42; }
+.navbar.bg-white .navbar-text, .navbar.bg-white .navbar-brand {
+  color: #222a42; }
+.navbar.bg-white .form-control {
+  color: #222a42 !important; }
+.navbar.bg-white .form-control::placeholder {
+  color: #9A9A9A !important; }
+.navbar.bg-dark {
+  background: #222a42 !important; }
+.navbar.bg-primary {
+  background-color: #e14eca !important; }
+.navbar.bg-warning {
+  background-color: #ff8d72 !important; }
+.navbar.bg-info {
+  background-color: #1d8cf8 !important; }
+.navbar.bg-success {
+  background-color: #00bf9a !important; }
+.navbar.bg-danger {
+  background-color: #fd5d93 !important; }
+.navbar .navbar-brand {
+  position: relative;
+  padding-top: .3125rem;
+  padding-bottom: .3125rem;
+  color: #ffffff;
+  text-transform: capitalize;
+  font-size: 1rem; }
+.navbar .navbar-brand span {
+  font-weight: 600; }
+.navbar .navbar-toggle button:focus, .navbar .navbar-toggler {
+  outline: none; }
+
+.navbar-minimize-fixed {
+  position: fixed;
+  margin-left: 40px;
+  margin-top: 14px;
+  transition: 0.3s ease;
+  color: white;
+  z-index: 20;
+  opacity: 0;
+  transition: 0.2s ease; }
+.navbar-minimize-fixed button i {
+  font-size: 18px; }

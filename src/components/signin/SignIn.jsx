@@ -20,10 +20,7 @@ import {
     InputGroupText,
     Row
 } from "reactstrap";
-
-// core components
-//import ExamplesNavbar from "components/Navbars/ExamplesNavbar.jsx";
-//import Footer from "components/Footer/Footer.jsx";
+import HeaderNavbar from "../header-navbar/HeaderNavbar";
 
 class SignIn extends React.Component {
     state = {
@@ -66,7 +63,7 @@ class SignIn extends React.Component {
     render() {
         return (
             <>
-                {/*<ExamplesNavbar />*/}
+                <HeaderNavbar/>
                 <div className="wrapper">
                     <div className="page-header">
                         <div className="page-header-image"/>
