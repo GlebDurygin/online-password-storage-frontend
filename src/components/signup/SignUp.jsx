@@ -25,7 +25,11 @@ import HeaderNavbar from "../header-navbar/HeaderNavbar";
 class SignUp extends React.Component {
     state = {
         squares1to6: "",
-        squares7and8: ""
+        squares7and8: "",
+
+        usernameValue: "",
+        passwordValue: "",
+        keywordValue: "",
     };
 
     componentDidMount() {
@@ -58,6 +62,27 @@ class SignUp extends React.Component {
                 posY * -0.02 +
                 "deg)"
         });
+    };
+
+    sendRequestToServer = event => {
+        fetch('http://localhost:9080/sign-up', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: this.state.usernameValue,
+                password: this.state.passwordValue,
+                keyword: this.state.keywordValue,
+            }),
+        })
+            .then(r => {
+                this.props.history.push("/sign-in");
+            })
+            .catch(error => {
+                this.props.history.push("/sign-up");
+            })
     };
 
     render() {
@@ -108,7 +133,10 @@ class SignUp extends React.Component {
                                                                 this.setState({usernameFocus: true})
                                                             }
                                                             onBlur={e =>
-                                                                this.setState({usernameFocus: false})
+                                                                this.setState({
+                                                                    usernameFocus: false,
+                                                                    usernameValue: e.target.value
+                                                                })
                                                             }
                                                         />
                                                     </InputGroup>
@@ -126,7 +154,10 @@ class SignUp extends React.Component {
                                                             placeholder="Password"
                                                             type="password"
                                                             onFocus={e => this.setState({passwordFocus: true})}
-                                                            onBlur={e => this.setState({passwordFocus: false})}
+                                                            onBlur={e => this.setState({
+                                                                passwordFocus: false,
+                                                                passwordValue: e.target.value
+                                                            })}
                                                         />
                                                     </InputGroup>
                                                     <InputGroup
@@ -146,14 +177,20 @@ class SignUp extends React.Component {
                                                                 this.setState({keywordFocus: true})
                                                             }
                                                             onBlur={e =>
-                                                                this.setState({keywordFocus: false})
+                                                                this.setState({
+                                                                    keywordFocus: false,
+                                                                    keywordValue: e.target.value
+                                                                })
                                                             }
                                                         />
                                                     </InputGroup>
                                                 </Form>
                                             </CardBody>
                                             <CardFooter>
-                                                <Button className="btn-round" color="primary" size="lg">
+                                                <Button className="btn-round" color="primary" size="lg"
+                                                        onClick={e =>
+                                                            this.sendRequestToServer(e)
+                                                        }>
                                                     Sign up
                                                 </Button>
                                             </CardFooter>
