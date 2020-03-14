@@ -177,6 +177,14 @@ class UserProfile extends React.Component {
         })
     }
 
+    deleteRecord = (index) => {
+        let records = this.state.records;
+        records.slice(index, 1);
+        this.setState({
+            records: records
+        })
+    }
+
     resetModalState = () => {
         this.setState({
             modal: {
@@ -377,7 +385,8 @@ class UserProfile extends React.Component {
                                                                             </UncontrolledTooltip>
                                                                             <Button id={"delete-btn-" + i}
                                                                                     className="btn-link"
-                                                                                    color="danger" size="sm">
+                                                                                    color="danger" size="sm"
+                                                                                    onClick={(e) => this.deleteRecord(i)}>
                                                                                 <i className="tim-icons icon-simple-remove"/>
                                                                             </Button>
                                                                             <UncontrolledTooltip
