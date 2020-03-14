@@ -18,14 +18,20 @@ import {
     InputGroup,
     InputGroupAddon,
     InputGroupText,
-    Row
+    Row,
+    UncontrolledAlert
 } from "reactstrap";
 import HeaderNavbar from "../header-navbar/HeaderNavbar";
 
 class SignIn extends React.Component {
     state = {
         squares1to6: "",
-        squares7and8: ""
+        squares7and8: "",
+
+        usernameValue: "",
+        passwordValue: "",
+
+        dangerNotification: false
     };
 
     componentDidMount() {
@@ -60,6 +66,38 @@ class SignIn extends React.Component {
         });
     };
 
+    sendRequestToServer = () => {
+        fetch('http://localhost:9080/sign-in', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: this.state.usernameValue,
+                password: this.state.passwordValue
+            }),
+        })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        this.props.history.push("/user-profile/"+ data.userId);
+                    });
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
+            })
+            .catch(error => {
+                this.toggleNotification("dangerNotification");
+            })
+    };
+
+    toggleNotification = notificationState => {
+        this.setState({
+            [notificationState]: !this.state[notificationState]
+        })
+    };
+
     render() {
         return (
             <>
@@ -88,6 +126,16 @@ class SignIn extends React.Component {
                                                     src={require("../../img/square-purple-1.png")}
                                                 />
                                                 <CardTitle tag="h4">Sign In</CardTitle>
+                                                <UncontrolledAlert className="alert-with-icon" color="danger"
+                                                                   isOpen={this.state.dangerNotification}
+                                                                   toggle={() => this.toggleNotification("dangerNotification")}>
+                                                    <span data-notify="icon"
+                                                          className="tim-icons icon-alert-circle-exc"/>
+                                                    <span>
+                                                        <b>Alert! </b> <br/>
+                                                        An error has occurred
+                                                    </span>
+                                                </UncontrolledAlert>
                                             </CardHeader>
                                             <CardBody>
                                                 <Form className="form">
@@ -108,7 +156,10 @@ class SignIn extends React.Component {
                                                                 this.setState({usernameFocus: true})
                                                             }
                                                             onBlur={e =>
-                                                                this.setState({usernameFocus: false})
+                                                                this.setState({
+                                                                    usernameFocus: false,
+                                                                    usernameValue: e.target.value
+                                                                })
                                                             }
                                                         />
                                                     </InputGroup>
@@ -126,13 +177,19 @@ class SignIn extends React.Component {
                                                             placeholder="Password"
                                                             type="password"
                                                             onFocus={e => this.setState({passwordFocus: true})}
-                                                            onBlur={e => this.setState({passwordFocus: false})}
+                                                            onBlur={e => this.setState({
+                                                                passwordFocus: false,
+                                                                passwordValue: e.target.value
+                                                            })}
                                                         />
                                                     </InputGroup>
                                                 </Form>
                                             </CardBody>
                                             <CardFooter>
-                                                <Button className="btn-round" color="primary" size="lg">
+                                                <Button className="btn-round" color="primary" size="lg"
+                                                        onClick={e =>
+                                                            this.sendRequestToServer(e)
+                                                        }>
                                                     Sign in
                                                 </Button>
                                             </CardFooter>
@@ -173,7 +230,6 @@ class SignIn extends React.Component {
                             </Container>
                         </div>
                     </div>
-                    {/*<Footer />*/}
                 </div>
             </>
         );

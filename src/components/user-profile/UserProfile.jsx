@@ -21,6 +21,7 @@ import {
     Modal,
     Row,
     Table,
+    UncontrolledAlert,
     UncontrolledTooltip
 } from "reactstrap";
 import classnames from "classnames";
@@ -31,9 +32,29 @@ class UserProfile extends React.Component {
     state = {
         squares1to6: "",
         squares7and8: "",
+
+        usernameValue: "",
+        passwordValue: "",
+        keywordValue: "",
+        records: [],
+
+        modal: {
+            isEdit: false,
+            recordId: -1,
+            header: "",
+            data: "",
+            description: "",
+        },
+
         recordModal: false,
-        deleteModal: false
+        deleteModal: false,
+
+        dangerNotification: false
     };
+
+    componentWillMount() {
+        this.getUserProfile();
+    }
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -67,10 +88,122 @@ class UserProfile extends React.Component {
         });
     };
 
-    toggleModal = modalState => {
+    getUserProfile = () => {
+        fetch('http://localhost:9080/user-profile/' + this.props.match.params.userId, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        this.setState({
+                            usernameValue: data.username,
+                            passwordValue: data.password,
+                            keywordValue: data.keyword,
+                            records: data.records
+                        })
+                    });
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
+            })
+            .catch(error => {
+                this.toggleNotification("dangerNotification");
+            })
+    };
+
+    saveRecord = (isEdit) => {
+        let recordIdPath = isEdit
+            ? '/record/' + this.state.modal.recordId
+            : '/record';
+        fetch('http://localhost:9080/user-profile/'
+            + this.props.match.params.userId
+            + recordIdPath,
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    header: this.state.modal.header,
+                    description: this.state.modal.description,
+                    data: this.state.modal.data
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then((data) => {
+
+                    })
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
+            })
+            .catch(error => {
+                this.toggleNotification("dangerNotification");
+            })
+    };
+
+    addRecord = () => {
+        let records = this.state.records;
+        records.push(
+            {
+                header: this.state.modal.header,
+                description: this.state.modal.description,
+                data: this.state.modal.data,
+                recordId: this.state.modal.recordId
+            }
+        )
         this.setState({
-            [modalState]: !this.state[modalState]
+            records: records
+        })
+    }
+
+    editRecord = () => {
+        let records = this.state.records;
+        records.forEach((record) => {
+            if (record.header === this.state.modal.header) {
+                record.header = this.state.modal.header;
+                record.data = this.state.modal.data;
+                record.description = this.state.modal.description;
+            }
         });
+        this.setState({
+            records: records
+        })
+    }
+
+    resetModalState = () => {
+        this.setState({
+            modal: {
+                isEdit: false,
+                recordId: -1,
+                header: "",
+                data: "",
+                description: "",
+            }
+        })
+    }
+
+    toggleModal = (modalState, isEdit, recordId) => {
+        this.setState({
+            modal: {
+                ...this.state.modal,
+                isEdit: isEdit,
+                recordId: recordId
+            },
+            [modalState]: !this.state[modalState]
+        })
+    };
+
+    toggleNotification = notificationState => {
+        this.setState({
+            [notificationState]: !this.state[notificationState]
+        })
     };
 
     render() {
@@ -101,6 +234,16 @@ class UserProfile extends React.Component {
                                                     src={require("../../img/square-purple-1.png")}
                                                 />
                                                 <CardTitle tag="h4">User profile</CardTitle>
+                                                <UncontrolledAlert className="alert-with-icon" color="danger"
+                                                                   isOpen={this.state.dangerNotification}
+                                                                   toggle={() => this.toggleNotification("dangerNotification")}>
+                                                    <span data-notify="icon"
+                                                          className="tim-icons icon-alert-circle-exc"/>
+                                                    <span>
+                                                        <b>Alert! </b> <br/>
+                                                        An error has occurred
+                                                    </span>
+                                                </UncontrolledAlert>
                                             </CardHeader>
                                             <CardBody>
                                                 <CardImg
@@ -123,11 +266,15 @@ class UserProfile extends React.Component {
                                                         <Input
                                                             placeholder="Username"
                                                             type="text"
+                                                            defaultValue={this.state.usernameValue}
                                                             onFocus={e =>
                                                                 this.setState({usernameFocus: true})
                                                             }
                                                             onBlur={e =>
-                                                                this.setState({usernameFocus: false})
+                                                                this.setState({
+                                                                    usernameFocus: false,
+                                                                    usernameValue: e.target.value
+                                                                })
                                                             }
                                                         />
                                                     </InputGroup>
@@ -144,8 +291,12 @@ class UserProfile extends React.Component {
                                                         <Input
                                                             placeholder="Password"
                                                             type="password"
+                                                            defaultValue={this.state.passwordValue}
                                                             onFocus={e => this.setState({passwordFocus: true})}
-                                                            onBlur={e => this.setState({passwordFocus: false})}
+                                                            onBlur={e => this.setState({
+                                                                passwordFocus: false,
+                                                                passwordValue: e.target.value
+                                                            })}
                                                         />
                                                     </InputGroup>
                                                     <InputGroup
@@ -161,12 +312,14 @@ class UserProfile extends React.Component {
                                                         <Input
                                                             placeholder="Keyword"
                                                             type="text"
+                                                            defaultValue={this.state.keywordValue}
                                                             onFocus={e =>
                                                                 this.setState({keywordFocus: true})
                                                             }
-                                                            onBlur={e =>
-                                                                this.setState({keywordFocus: false})
-                                                            }
+                                                            onBlur={e => this.setState({
+                                                                keywordFocus: false,
+                                                                keywordValue: e.target.value
+                                                            })}
                                                         />
                                                     </InputGroup>
                                                 </Form>
@@ -179,7 +332,10 @@ class UserProfile extends React.Component {
                                                     <CardTitle tag="h4">Records</CardTitle>
                                                     <Button id="add-btn" className="add-button btn-tooltip"
                                                             color="primary" type="button"
-                                                            onClick={() => this.toggleModal("recordModal")}>
+                                                            onClick={() => {
+                                                                this.toggleModal("recordModal");
+                                                                this.resetModalState();
+                                                            }}>
                                                         <i className="tim-icons icon-simple-add"/>
                                                     </Button>
                                                     <UncontrolledTooltip
@@ -199,102 +355,42 @@ class UserProfile extends React.Component {
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <tr>
-                                                        <td>BTC</td>
-                                                        <td>7.342</td>
-                                                        <td>
-                                                            <div className="last-column">
-                                                                48,870.75 USD
-                                                                <div className="edit-buttons">
-                                                                    <Button id="edit-btn-1"
-                                                                            className="btn-link"
-                                                                            color="info" size="sm"
-                                                                            onClick={() => this.toggleModal("recordModal")}>
-                                                                        <i className="tim-icons icon-pencil"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="edit-btn-1">
-                                                                        Edit record
-                                                                    </UncontrolledTooltip>
-                                                                    <Button id="delete-btn-1"
-                                                                            className="btn-link"
-                                                                            color="danger" size="sm">
-                                                                        <i className="tim-icons icon-simple-remove"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="delete-btn-1">
-                                                                        Delete record
-                                                                    </UncontrolledTooltip>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>ETH</td>
-                                                        <td>30.737</td>
-                                                        <td>
-                                                            <div className="last-column">
-                                                                48,870.75 USD
-                                                                <div className="edit-buttons">
-                                                                    <Button id="edit-btn-2"
-                                                                            className="btn-link"
-                                                                            color="info" size="sm"
-                                                                            onClick={() => this.toggleModal("recordModal")}>
-                                                                        <i className="tim-icons icon-pencil"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="edit-btn-2">
-                                                                        Edit record
-                                                                    </UncontrolledTooltip>
-                                                                    <Button id="delete-btn-2"
-                                                                            className="btn-link"
-                                                                            color="danger" size="sm">
-                                                                        <i className="tim-icons icon-simple-remove"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="delete-btn-2">
-                                                                        Delete record
-                                                                    </UncontrolledTooltip>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>XRP</td>
-                                                        <td>19.242</td>
-                                                        <td>
-                                                            <div className="last-column">
-                                                                48,870.75 USD
-                                                                <div className="edit-buttons">
-                                                                    <Button id="edit-btn-3"
-                                                                            className="btn-link"
-                                                                            color="info" size="sm"
-                                                                            onClick={() => this.toggleModal("recordModal")}>
-                                                                        <i className="tim-icons icon-pencil"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="edit-btn-3">
-                                                                        Edit record
-                                                                    </UncontrolledTooltip>
-                                                                    <Button id="delete-btn-3"
-                                                                            className="btn-link"
-                                                                            color="danger" size="sm">
-                                                                        <i className="tim-icons icon-simple-remove"/>
-                                                                    </Button>
-                                                                    <UncontrolledTooltip
-                                                                        placement="top"
-                                                                        target="delete-btn-3">
-                                                                        Delete record
-                                                                    </UncontrolledTooltip>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                    {
+                                                        this.state.records.map((record, i) =>
+                                                            <tr>
+                                                                <td>{record.header}</td>
+                                                                <td>{record.description}</td>
+                                                                <td>
+                                                                    <div className="last-column">
+                                                                        {record.data}
+                                                                        <div className="edit-buttons">
+                                                                            <Button id={"edit-btn-" + i}
+                                                                                    className="btn-link"
+                                                                                    color="info" size="sm"
+                                                                                    onClick={() => this.toggleModal("recordModal", true, record.id)}>
+                                                                                <i className="tim-icons icon-pencil"/>
+                                                                            </Button>
+                                                                            <UncontrolledTooltip
+                                                                                placement="top"
+                                                                                target={"edit-btn-" + i}>
+                                                                                Edit record
+                                                                            </UncontrolledTooltip>
+                                                                            <Button id={"delete-btn-" + i}
+                                                                                    className="btn-link"
+                                                                                    color="danger" size="sm">
+                                                                                <i className="tim-icons icon-simple-remove"/>
+                                                                            </Button>
+                                                                            <UncontrolledTooltip
+                                                                                placement="top"
+                                                                                target={"delete-btn-" + i}>
+                                                                                Delete record
+                                                                            </UncontrolledTooltip>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
                                                     </tbody>
                                                 </Table>
                                             </CardBody>
@@ -349,7 +445,7 @@ class UserProfile extends React.Component {
                             <i className="tim-icons icon-simple-remove text-white"/>
                         </button>
                         <div className="text-muted text-center ml-auto mr-auto">
-                            <h3 className="mb-0">Add record</h3>
+                            <h3 className="mb-0">{this.state.modal.isEdit ? "Edit" : "Add"} record</h3>
                         </div>
                     </div>
                     <div className="modal-body">
@@ -368,8 +464,15 @@ class UserProfile extends React.Component {
                                     <Input
                                         placeholder="Header"
                                         type="text"
+                                        defaultValue={this.state.modal.header}
                                         onFocus={e => this.setState({headerModalFocus: true})}
-                                        onBlur={e => this.setState({headerModalFocus: false})}
+                                        onBlur={e => this.setState({
+                                            headerModalFocus: false,
+                                            modal: {
+                                                ...this.state.modal,
+                                                header: e.target.value
+                                            }
+                                        })}
                                     />
                                 </InputGroup>
                             </FormGroup>
@@ -387,8 +490,15 @@ class UserProfile extends React.Component {
                                     <Input
                                         placeholder="Description"
                                         type="text"
+                                        defaultValue={this.state.modal.description}
                                         onFocus={e => this.setState({descriptionModalFocus: true})}
-                                        onBlur={e => this.setState({descriptionModalFocus: false})}
+                                        onBlur={e => this.setState({
+                                            descriptionModalFocus: false,
+                                            modal: {
+                                                ...this.state.modal,
+                                                description: e.target.value
+                                            }
+                                        })}
                                     />
                                 </InputGroup>
                             </FormGroup>
@@ -406,15 +516,31 @@ class UserProfile extends React.Component {
                                     <Input
                                         placeholder="Password"
                                         type="text"
+                                        defaultValue={this.state.modal.data}
                                         onFocus={e => this.setState({passwordModalFocus: true})}
-                                        onBlur={e => this.setState({passwordModalFocus: false})}
+                                        onBlur={e => this.setState({
+                                            dataModalFocus: false,
+                                            modal: {
+                                                ...this.state.modal,
+                                                data: e.target.value
+                                            }
+                                        })}
                                     />
                                 </InputGroup>
                             </FormGroup>
                             <div className="text-center">
                                 <Button className="btn-round" color="primary"
-                                        type="button" size="lg">
-                                    Add record
+                                        type="button" size="lg"
+                                        onClick={() => {
+                                            //this.saveRecord();
+                                            if (!this.state.modal.isEdit) {
+                                                this.addRecord();
+                                            } else {
+                                                this.editRecord();
+                                            }
+                                            this.toggleModal("recordModal");
+                                        }}>
+                                    Save
                                 </Button>
                             </div>
                         </Form>

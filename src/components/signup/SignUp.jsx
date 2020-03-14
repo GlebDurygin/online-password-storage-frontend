@@ -18,7 +18,8 @@ import {
     InputGroup,
     InputGroupAddon,
     InputGroupText,
-    Row
+    Row,
+    UncontrolledAlert
 } from "reactstrap";
 import HeaderNavbar from "../header-navbar/HeaderNavbar";
 
@@ -30,6 +31,8 @@ class SignUp extends React.Component {
         usernameValue: "",
         passwordValue: "",
         keywordValue: "",
+
+        dangerNotification: false
     };
 
     componentDidMount() {
@@ -64,7 +67,13 @@ class SignUp extends React.Component {
         });
     };
 
-    sendRequestToServer = event => {
+    toggleNotification = notificationState => {
+        this.setState({
+            [notificationState]: !this.state[notificationState]
+        })
+    };
+
+    sendRequestToServer = () => {
         fetch('http://localhost:9080/sign-up', {
             method: 'POST',
             headers: {
@@ -77,11 +86,15 @@ class SignUp extends React.Component {
                 keyword: this.state.keywordValue,
             }),
         })
-            .then(r => {
-                this.props.history.push("/sign-in");
+            .then(response => {
+                if (response.ok) {
+                    this.props.history.push("/sign-in");
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
             })
             .catch(error => {
-                this.props.history.push("/sign-up");
+                this.toggleNotification("dangerNotification");
             })
     };
 
@@ -113,6 +126,16 @@ class SignUp extends React.Component {
                                                     src={require("../../img/square-purple-1.png")}
                                                 />
                                                 <CardTitle tag="h4">Sign Up</CardTitle>
+                                                <UncontrolledAlert className="alert-with-icon" color="danger"
+                                                                   isOpen={this.state.dangerNotification}
+                                                                   toggle={() => this.toggleNotification("dangerNotification")}>
+                                                    <span data-notify="icon"
+                                                          className="tim-icons icon-alert-circle-exc"/>
+                                                    <span>
+                                                        <b>Alert! </b> <br/>
+                                                        An error has occurred
+                                                    </span>
+                                                </UncontrolledAlert>
                                             </CardHeader>
                                             <CardBody>
                                                 <Form className="form">
