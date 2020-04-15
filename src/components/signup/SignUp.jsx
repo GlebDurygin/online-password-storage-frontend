@@ -2,6 +2,7 @@ import React from "react";
 import './sign-up.scss';
 import classnames from "classnames";
 import {withRouter} from "react-router-dom";
+import {withCookies} from "react-cookie";
 // reactstrap components
 import {
     Button,
@@ -254,11 +255,10 @@ class SignUp extends React.Component {
                             </Container>
                         </div>
                     </div>
-                    {/*<Footer />*/}
                 </div>
             </>
         );
     }
 }
 
-export default withRouter(SignUp);
+export default withRouter(withCookies(SignUp));

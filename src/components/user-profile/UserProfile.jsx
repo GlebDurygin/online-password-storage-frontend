@@ -1,6 +1,7 @@
 import React from "react";
 import './user-profile.scss';
 import {withRouter} from "react-router-dom";
+import {withCookies} from "react-cookie";
 // reactstrap components
 import {
     Button,
@@ -95,6 +96,7 @@ class UserProfile extends React.Component {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
+            credentials: 'include'
         })
             .then(response => {
                 if (response.ok) {
@@ -133,6 +135,7 @@ class UserProfile extends React.Component {
                     description: this.state.modal.description,
                     data: this.state.modal.data
                 }),
+                credentials: 'include'
             })
             .then(response => {
                 if (response.ok) {
@@ -560,4 +563,4 @@ class UserProfile extends React.Component {
     }
 }
 
-export default withRouter(UserProfile);
+export default withRouter(withCookies(UserProfile));

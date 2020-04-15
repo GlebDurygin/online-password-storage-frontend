@@ -2,6 +2,7 @@ import React from "react";
 import './sign-in.scss';
 import classnames from "classnames";
 import {withRouter} from "react-router-dom";
+import {withCookies} from "react-cookie";
 // reactstrap components
 import {
     Button,
@@ -33,6 +34,8 @@ class SignIn extends React.Component {
 
         dangerNotification: false
     };
+
+    srpService = require('../srp/SrpService');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -66,22 +69,77 @@ class SignIn extends React.Component {
         });
     };
 
-    sendRequestToServer = () => {
-        fetch('http://localhost:9080/sign-in', {
+    sendAuthorizationRequestToServer = () => {
+        let emphaticKeyAValues = this.srpService.computeEmphaticKeyA();
+
+        fetch('http://localhost:9080//sign-in-authorization', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 username: this.state.usernameValue,
-                password: this.state.passwordValue
+                emphaticKeyA: emphaticKeyAValues.emphaticKeyA.toString()
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
+            })
+            .then(serverResponse => {
+                this.sendCheckRequestToServer(emphaticKeyAValues, serverResponse);
+            })
+            .catch(error => {
+                this.toggleNotification("dangerNotification");
+            })
+    };
+
+    sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
+        let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA.toString(),
+            serverResponse.emphaticKeyB);
+        let privateKey = this.srpService.computePrivateKey(serverResponse.salt,
+            this.state.usernameValue,
+            this.state.passwordValue);
+        let sessionKey = this.srpService.computeSessionKey(serverResponse.emphaticKeyB,
+            emphaticKeyAValues.randomA,
+            privateKey,
+            maskValue);
+        let clientCheckValue = this.srpService.computeClientCheckValue(this.state.usernameValue,
+            serverResponse.salt,
+            emphaticKeyAValues.emphaticKeyA.toString(),
+            serverResponse.emphaticKeyB,
+            sessionKey);
+
+        fetch('http://localhost:9080//sign-in-check', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                clientCheckValue: clientCheckValue
             }),
+            credentials: 'include'
         })
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        this.props.history.push("/user-profile/"+ data.userId);
+                        let serverCheckValue = this.srpService.computeServerCheckValue(
+                            emphaticKeyAValues.emphaticKeyA.toString(),
+                            clientCheckValue,
+                            sessionKey);
+
+                        if (serverCheckValue === data.serverCheckValue) {
+                            this.props.cookies.set('SESSION_KEY', sessionKey);
+                            this.sendGetUserProfileRequest();
+                        } else {
+                            this.toggleNotification("dangerNotification");
+                        }
                     });
                 } else {
                     this.toggleNotification("dangerNotification");
@@ -91,6 +149,29 @@ class SignIn extends React.Component {
                 this.toggleNotification("dangerNotification");
             })
     };
+
+    sendGetUserProfileRequest = () => {
+        fetch('http://localhost:9080//user-profile', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+            .then(response => {
+                if (response.ok) {
+                    response.json().then(data => {
+                        this.props.history.push("/user-profile/" + data.userId);
+                    });
+                } else {
+                    this.toggleNotification("dangerNotification");
+                }
+            })
+            .catch(error => {
+                this.toggleNotification("dangerNotification");
+            })
+    }
 
     toggleNotification = notificationState => {
         this.setState({
@@ -188,7 +269,7 @@ class SignIn extends React.Component {
                                             <CardFooter>
                                                 <Button className="btn-round" color="primary" size="lg"
                                                         onClick={e =>
-                                                            this.sendRequestToServer(e)
+                                                            this.sendAuthorizationRequestToServer(e)
                                                         }>
                                                     Sign in
                                                 </Button>
@@ -236,4 +317,4 @@ class SignIn extends React.Component {
     }
 }
 
-export default withRouter(SignIn);
+export default withRouter(withCookies(SignIn));
