@@ -78,14 +78,6 @@ class SignUp extends React.Component {
         })
     };
 
-    bin2String = (array) => {
-        let result = "";
-        for (let i = 0; i < array.length; i++) {
-            result += String.fromCharCode(array[i]);
-        }
-        return result;
-    }
-
     sendRequestToServer = () => {
         let salt = this.srpService.computeSalt();
         let verifier = this.srpService.computeVerifier(salt, this.state.usernameValue, this.state.passwordValue);
@@ -96,10 +88,10 @@ class SignUp extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.cipher(this.params.anonymousKey, this.state.usernameValue),
-                keyword: this.cipher(this.params.anonymousKey, this.state.keywordValue),
-                salt: this.cipher(this.params.anonymousKey, salt),
-                verifier: this.cipher(this.params.anonymousKey, verifier)
+                username: this.cipher(true, this.params.anonymousKey, this.state.usernameValue),
+                keyword: this.cipher(true, this.params.anonymousKey, this.state.keywordValue),
+                salt: this.cipher(true, this.params.anonymousKey, salt),
+                verifier: this.cipher(true, this.params.anonymousKey, verifier)
             }),
         })
             .then(response => {

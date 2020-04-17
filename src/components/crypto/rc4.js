@@ -1,4 +1,12 @@
-module.exports = function rc4(key, str) {
+module.exports = function rc4(forEncryption, key, str) {
+    let bytes;
+    if (!forEncryption) {
+        bytes = hexToBytes(str);
+        str = bin2String(bytes);
+    }
+    if (key.length > 64) {
+        key = key.substr(1, key.length - 1);
+    }
     let s = [], t = [], j = 0, res = [];
     for (let i = 0; i < 256; i++) {
         s[i] = i;
@@ -25,48 +33,43 @@ module.exports = function rc4(key, str) {
         k = s[q];
         res[y] = str.charCodeAt(y) ^ k;
     }
-    return res;
+
+    return forEncryption
+        ? res
+        : bin2String(res);
 }
 
-function uintArrayToString(byteArray) {
-    let str = "";
-/*    let signum = 1;
-    if (byteArray[0] > 127) {
+function bin2String(array) {
+    let result = "";
+    for (let i = 0; i < array.length; i++) {
+        result += String.fromCharCode(array[i]);
+    }
+    return result;
+}
+
+function hexToBytes(hex) {
+    let bytes = [];
+    let c = 0;
+    let signum = 1;
+    if (hex.charAt(c) === '-') {
+        c += 1;
         signum = -1;
     }
 
-    for (let i = 0; i < byteArray.length; i++) {
+    while (c < hex.length) {
+        let number;
         if (signum === -1) {
-            if (i === 0) {
-                str += String.fromCharCode(Number.parseInt(255 - byteArray[i]));
-            } else if (i === byteArray.length - 1) {
-                str += String.fromCharCode(Number.parseInt(256 - byteArray[i]));
+            if (c !== (hex.length - 2)) {
+                number = 255 - parseInt(hex.substr(c, 2), 16);
             } else {
-                str += String.fromCharCode(Number.parseInt(255 - byteArray[i]).toString(16).padStart(2, '0'));
+                number = 256 - parseInt(hex.substr(c, 2), 16);
             }
         } else {
-            if (i === 0) {
-                str += String.fromCharCode(byteArray[i].toString(16));
-            } else {
-                str += String.fromCharCode(byteArray[i].toString(16).padStart(2, '0'));
-            }
+            number = parseInt(hex.substr(c, 2), 16);
         }
-    }*/
-    let d = 'mTїт';
-    let d1 = d.charCodeAt(2);
-    let d2 = d.charCodeAt(3);
-    let d3 = d.charCodeAt(4);
+        c += 2;
 
-
-    for (let i = 0; i < byteArray.length; i++) {
-        let x;
-        if (byteArray[i] > 127) {
-            x = -(256 - byteArray[i]);
-        } else {
-            x = byteArray[i];
-        }
-        str += String.fromCharCode(x);
+        bytes.push(number);
     }
-
-    return str;
+    return bytes;
 }

@@ -35,6 +35,8 @@ class SignIn extends React.Component {
         dangerNotification: false
     };
 
+    cipher = require('../crypto/rc4');
+    params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
 
     componentDidMount() {
@@ -80,8 +82,8 @@ class SignIn extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.state.usernameValue,
-                emphaticKeyA: emphaticKeyAValues.emphaticKeyA
+                username: this.cipher(true, this.params.anonymousKey, this.state.usernameValue),
+                emphaticKeyA: this.cipher(true, this.params.anonymousKey, emphaticKeyAValues.emphaticKeyA)
             })
         })
             .then(response => {
@@ -100,19 +102,22 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA,
-            serverResponse.emphaticKeyB);
-        let privateKey = this.srpService.computePrivateKey(serverResponse.salt,
+        let authorizationKey = this.props.cookies.get('SESSION_KEY');
+        let salt = this.cipher(false, authorizationKey, serverResponse.salt);
+        let emphaticKeyB = this.cipher(false, authorizationKey, serverResponse.emphaticKeyB);
+
+        let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA, emphaticKeyB);
+        let privateKey = this.srpService.computePrivateKey(salt,
             this.state.usernameValue,
             this.state.passwordValue);
-        let sessionKey = this.srpService.computeSessionKey(serverResponse.emphaticKeyB,
+        let sessionKey = this.srpService.computeSessionKey(emphaticKeyB,
             emphaticKeyAValues.randomA,
             privateKey,
             maskValue);
         let clientCheckValue = this.srpService.computeClientCheckValue(this.state.usernameValue,
-            serverResponse.salt,
+            salt,
             emphaticKeyAValues.emphaticKeyA.toString(),
-            serverResponse.emphaticKeyB,
+            emphaticKeyB,
             sessionKey);
 
         fetch('http://localhost:9080//sign-in-check', {
@@ -122,7 +127,7 @@ class SignIn extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                clientCheckValue: clientCheckValue
+                clientCheckValue: this.cipher(true, authorizationKey, clientCheckValue)
             }),
             credentials: 'include'
         })
