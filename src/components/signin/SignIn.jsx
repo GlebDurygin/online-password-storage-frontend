@@ -35,7 +35,7 @@ class SignIn extends React.Component {
         dangerNotification: false
     };
 
-    srpService = require('../srp/SrpService');
+    srpService = require('../crypto/SrpService');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -81,7 +81,7 @@ class SignIn extends React.Component {
             },
             body: JSON.stringify({
                 username: this.state.usernameValue,
-                emphaticKeyA: emphaticKeyAValues.emphaticKeyA.toString()
+                emphaticKeyA: emphaticKeyAValues.emphaticKeyA
             })
         })
             .then(response => {
@@ -100,7 +100,7 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA.toString(),
+        let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA,
             serverResponse.emphaticKeyB);
         let privateKey = this.srpService.computePrivateKey(serverResponse.salt,
             this.state.usernameValue,

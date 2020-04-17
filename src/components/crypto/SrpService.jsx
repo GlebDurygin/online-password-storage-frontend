@@ -4,21 +4,23 @@ let bigInt = require("big-integer");
 let randomHex = require('crypto-random-hex')
 
 function computeEmphaticKeyA() {
-    let random = generateRandom();
+    let random = generateRandom(32);
     let a = bigInt(random, 16);
 
     return {
-        emphaticKeyA: params.g.modPow(a, params.N),
+        emphaticKeyA: params.g.modPow(a, params.N).toString(16),
         randomA: a
     };
 }
 
-function generateRandom() {
-    return randomHex(32)
+function generateRandom(bytes) {
+    return randomHex(bytes)
 }
 
 function computeMaskValue(emphaticKeyA, emphaticKeyB) {
-    return hash(emphaticKeyA, emphaticKeyB);
+    let A = bigInt(emphaticKeyA, 16);
+    let B = bigInt(emphaticKeyB, 16);
+    return hash(A.toString(), B.toString());
 }
 
 function computePrivateKey(salt, username, password) {
@@ -28,7 +30,7 @@ function computePrivateKey(salt, username, password) {
 }
 
 function computeSessionKey(emphaticKeyB, randomA, privateKey, maskValue) {
-    let B = bigInt(emphaticKeyB);
+    let B = bigInt(emphaticKeyB, 16);
     let x = bigInt(privateKey, 16);
     let u = bigInt(maskValue, 16);
 
@@ -47,11 +49,24 @@ function computeClientCheckValue(username, salt, emphaticKeyA, emphaticKeyB, ses
     let g = bigInt(hash(params.g.toString()), 16);
     let i = bigInt(hash(username), 16);
     let s = n.xor(g);
-    return hash(s.toString(), i.toString(), salt, emphaticKeyA, emphaticKeyB, sessionKey)
+    let A = bigInt(emphaticKeyA, 16);
+    let B = bigInt(emphaticKeyB, 16);
+    return hash(s.toString(), i.toString(), salt, A.toString(), B.toString(), sessionKey)
 }
 
 function computeServerCheckValue(emphaticKeyA, clientCheckValue, sessionKey) {
-    return hash(emphaticKeyA, clientCheckValue, sessionKey);
+    let A = bigInt(emphaticKeyA, 16);
+    return hash(A.toString(), clientCheckValue, sessionKey);
+}
+
+function computeSalt() {
+    return generateRandom(16);
+}
+
+function computeVerifier(salt, username, password) {
+    let privateKey = computePrivateKey(salt, username, password);
+    let x = bigInt(privateKey, 16);
+    return params.g.modPow(x, params.N).toString(16);
 }
 
 module.exports = {
@@ -60,5 +75,7 @@ module.exports = {
     computePrivateKey: computePrivateKey,
     computeSessionKey: computeSessionKey,
     computeClientCheckValue: computeClientCheckValue,
-    computeServerCheckValue: computeServerCheckValue
+    computeServerCheckValue: computeServerCheckValue,
+    computeSalt: computeSalt,
+    computeVerifier: computeVerifier
 }

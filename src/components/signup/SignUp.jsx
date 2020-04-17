@@ -36,6 +36,10 @@ class SignUp extends React.Component {
         dangerNotification: false
     };
 
+    cipher = require('../crypto/rc4');
+    params = require('../crypto/params');
+    srpService = require('../crypto/SrpService');
+
     componentDidMount() {
         document.body.classList.toggle("register-page");
         document.documentElement.addEventListener("mousemove", this.followCursor);
@@ -74,7 +78,17 @@ class SignUp extends React.Component {
         })
     };
 
+    bin2String = (array) => {
+        let result = "";
+        for (let i = 0; i < array.length; i++) {
+            result += String.fromCharCode(array[i]);
+        }
+        return result;
+    }
+
     sendRequestToServer = () => {
+        let salt = this.srpService.computeSalt();
+        let verifier = this.srpService.computeVerifier(salt, this.state.usernameValue, this.state.passwordValue);
         fetch('http://localhost:9080/sign-up', {
             method: 'POST',
             headers: {
@@ -82,9 +96,10 @@ class SignUp extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.state.usernameValue,
-                password: this.state.passwordValue,
-                keyword: this.state.keywordValue,
+                username: this.cipher(this.params.anonymousKey, this.state.usernameValue),
+                keyword: this.cipher(this.params.anonymousKey, this.state.keywordValue),
+                salt: this.cipher(this.params.anonymousKey, salt),
+                verifier: this.cipher(this.params.anonymousKey, verifier)
             }),
         })
             .then(response => {
