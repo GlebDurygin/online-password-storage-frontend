@@ -15,7 +15,10 @@ const input = {
     9E4AFF73
   `,
     generatorModulo: '02',
-    anonymousSessionKey: '3026f7bbfa68b1ac22be3d719827a5aa2e5e5c599852fd2b9a1123ecfa29b275'
+    authorizationKeyCookie: 'AUTHORIZATION_KEY',
+    sessionIdCookie: 'SESSION_ID',
+    anonymousSessionKey: '3026f7bbfa68b1ac22be3d719827a5aa2e5e5c599852fd2b9a1123ecfa29b275',
+    anonymousSessionId: '473dc69678d1c1db737484948eff81a75882fcdfe16ecae83e3fc2e88d6f7034'
 }
 
 // N    A large safe prime (N = 2q+1, where q is prime)
@@ -24,4 +27,7 @@ const input = {
 exports.N = bigInt(input.largeSafePrime.replace(/\s+/g, ''), 16)
 exports.g = bigInt(input.generatorModulo.replace(/\s+/g, ''), 16)
 exports.K = bigInt(hash(exports.N.toString(), exports.g.toString()), 16)
+exports.authorizationKeyCookie = input.authorizationKeyCookie
+exports.sessionIdCookie = input.sessionIdCookie
 exports.anonymousKey = input.anonymousSessionKey
+exports.anonymousSessionId = input.anonymousSessionId

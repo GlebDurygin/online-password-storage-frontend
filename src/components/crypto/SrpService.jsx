@@ -69,6 +69,10 @@ function computeVerifier(salt, username, password) {
     return params.g.modPow(x, params.N).toString(16);
 }
 
+function computeSessionId(clientCheckValue, serverCheckValue, sessionKey) {
+    return hash(clientCheckValue, serverCheckValue, sessionKey);
+}
+
 module.exports = {
     computeEmphaticKeyA: computeEmphaticKeyA,
     computeMaskValue: computeMaskValue,
@@ -77,5 +81,6 @@ module.exports = {
     computeClientCheckValue: computeClientCheckValue,
     computeServerCheckValue: computeServerCheckValue,
     computeSalt: computeSalt,
-    computeVerifier: computeVerifier
+    computeVerifier: computeVerifier,
+    computeSessionId: computeSessionId
 }

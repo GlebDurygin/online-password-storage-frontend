@@ -102,7 +102,7 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let authorizationKey = this.props.cookies.get('SESSION_KEY');
+        let authorizationKey = this.props.cookies.get(this.params.authorizationKeyCookie);
         let salt = this.cipher(false, authorizationKey, serverResponse.salt);
         let emphaticKeyB = this.cipher(false, authorizationKey, serverResponse.emphaticKeyB);
 
@@ -140,7 +140,8 @@ class SignIn extends React.Component {
                             sessionKey);
 
                         if (serverCheckValue === data.serverCheckValue) {
-                            this.props.cookies.set('SESSION_KEY', sessionKey);
+                            let sessionId = this.srpService.computeSessionId(clientCheckValue, serverCheckValue, sessionKey);
+                            this.props.cookies.set(this.params.sessionIdCookie, sessionId);
                             this.sendGetUserProfileRequest();
                         } else {
                             this.toggleNotification("dangerNotification");
