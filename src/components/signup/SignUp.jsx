@@ -31,7 +31,6 @@ class SignUp extends React.Component {
 
         usernameValue: "",
         passwordValue: "",
-        keywordValue: "",
 
         dangerNotification: false
     };
@@ -89,7 +88,6 @@ class SignUp extends React.Component {
             },
             body: JSON.stringify({
                 username: this.cipher(true, this.params.anonymousKey, this.state.usernameValue),
-                keyword: this.cipher(true, this.params.anonymousKey, this.state.keywordValue),
                 salt: this.cipher(true, this.params.anonymousKey, salt),
                 verifier: this.cipher(true, this.params.anonymousKey, verifier)
             }),
@@ -189,30 +187,6 @@ class SignUp extends React.Component {
                                                                 passwordFocus: false,
                                                                 passwordValue: e.target.value
                                                             })}
-                                                        />
-                                                    </InputGroup>
-                                                    <InputGroup
-                                                        className={classnames({
-                                                            "input-group-focus": this.state.keywordFocus
-                                                        })}
-                                                    >
-                                                        <InputGroupAddon addonType="prepend">
-                                                            <InputGroupText>
-                                                                <i className="tim-icons icon-alert-circle-exc"/>
-                                                            </InputGroupText>
-                                                        </InputGroupAddon>
-                                                        <Input
-                                                            placeholder="Keyword"
-                                                            type="text"
-                                                            onFocus={e =>
-                                                                this.setState({keywordFocus: true})
-                                                            }
-                                                            onBlur={e =>
-                                                                this.setState({
-                                                                    keywordFocus: false,
-                                                                    keywordValue: e.target.value
-                                                                })
-                                                            }
                                                         />
                                                     </InputGroup>
                                                 </Form>

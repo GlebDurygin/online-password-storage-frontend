@@ -36,7 +36,6 @@ class UserProfile extends React.Component {
 
         usernameValue: "",
         passwordValue: "",
-        keywordValue: "",
         records: [],
 
         modal: {
@@ -97,20 +96,18 @@ class UserProfile extends React.Component {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+                'Content-Type': 'application/json',
+                'Session-Id': this.params.getSessionId()
+            }
         })
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
                         let username = this.cipher(false, this.params.getSessionKey(), data.username);
                         let password = this.cipher(false, this.params.getSessionKey(), data.password);
-                        let keyword = this.cipher(false, this.params.getSessionKey(), data.keyword);
                         this.setState({
                             usernameValue: username,
                             passwordValue: password,
-                            keywordValue: keyword,
                             records: data.records
                         })
                     });
@@ -140,8 +137,7 @@ class UserProfile extends React.Component {
                     header: this.state.modal.header,
                     description: this.state.modal.description,
                     data: this.state.modal.data
-                }),
-                credentials: 'include'
+                })
             })
             .then(response => {
                 if (response.ok) {
@@ -313,29 +309,6 @@ class UserProfile extends React.Component {
                                                             onBlur={e => this.setState({
                                                                 passwordFocus: false,
                                                                 passwordValue: e.target.value
-                                                            })}
-                                                        />
-                                                    </InputGroup>
-                                                    <InputGroup
-                                                        className={classnames({
-                                                            "input-group-focus": this.state.keywordFocus
-                                                        })}
-                                                    >
-                                                        <InputGroupAddon addonType="prepend">
-                                                            <InputGroupText>
-                                                                <i className="tim-icons icon-alert-circle-exc"/>
-                                                            </InputGroupText>
-                                                        </InputGroupAddon>
-                                                        <Input
-                                                            placeholder="Keyword"
-                                                            type="text"
-                                                            defaultValue={this.state.keywordValue}
-                                                            onFocus={e =>
-                                                                this.setState({keywordFocus: true})
-                                                            }
-                                                            onBlur={e => this.setState({
-                                                                keywordFocus: false,
-                                                                keywordValue: e.target.value
                                                             })}
                                                         />
                                                     </InputGroup>

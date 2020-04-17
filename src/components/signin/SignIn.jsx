@@ -76,7 +76,6 @@ class SignIn extends React.Component {
 
         fetch('http://localhost:9080//sign-in-authorization', {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -102,7 +101,7 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let authorizationKey = this.props.cookies.get(this.params.authorizationKeyCookie);
+        let authorizationKey = serverResponse.authorizationKey;
         let salt = this.cipher(false, authorizationKey, serverResponse.salt);
         let emphaticKeyB = this.cipher(false, authorizationKey, serverResponse.emphaticKeyB);
 
@@ -124,12 +123,12 @@ class SignIn extends React.Component {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization-Key': authorizationKey
             },
             body: JSON.stringify({
                 clientCheckValue: this.cipher(true, authorizationKey, clientCheckValue)
-            }),
-            credentials: 'include'
+            })
         })
             .then(response => {
                 if (response.ok) {
@@ -141,7 +140,7 @@ class SignIn extends React.Component {
 
                         if (serverCheckValue === data.serverCheckValue) {
                             let sessionId = this.srpService.computeSessionId(clientCheckValue, serverCheckValue, sessionKey);
-                            this.props.cookies.set(this.params.sessionIdCookie, sessionId);
+                            this.params.setSessionId(sessionId);
                             this.params.setSessionKey(sessionKey);
                             this.sendGetUserProfileRequest();
                         } else {
@@ -162,9 +161,9 @@ class SignIn extends React.Component {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
+                'Content-Type': 'application/json',
+                'Session-Id': this.params.getSessionId()
+            }
         })
             .then(response => {
                 if (response.ok) {
