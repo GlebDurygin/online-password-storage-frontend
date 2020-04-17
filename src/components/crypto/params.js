@@ -20,6 +20,15 @@ const input = {
     anonymousSessionKey: '3026f7bbfa68b1ac22be3d719827a5aa2e5e5c599852fd2b9a1123ecfa29b275',
     anonymousSessionId: '473dc69678d1c1db737484948eff81a75882fcdfe16ecae83e3fc2e88d6f7034'
 }
+let sessionKey = '';
+
+function setSessionKey(key) {
+  sessionKey = key;
+}
+
+function getSessionKey() {
+  return sessionKey;
+}
 
 // N    A large safe prime (N = 2q+1, where q is prime)
 // g    A generator modulo N
@@ -31,3 +40,5 @@ exports.authorizationKeyCookie = input.authorizationKeyCookie
 exports.sessionIdCookie = input.sessionIdCookie
 exports.anonymousKey = input.anonymousSessionKey
 exports.anonymousSessionId = input.anonymousSessionId
+exports.setSessionKey = setSessionKey
+exports.getSessionKey = getSessionKey

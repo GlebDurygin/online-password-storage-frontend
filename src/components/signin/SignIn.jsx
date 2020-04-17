@@ -142,6 +142,7 @@ class SignIn extends React.Component {
                         if (serverCheckValue === data.serverCheckValue) {
                             let sessionId = this.srpService.computeSessionId(clientCheckValue, serverCheckValue, sessionKey);
                             this.props.cookies.set(this.params.sessionIdCookie, sessionId);
+                            this.params.setSessionKey(sessionKey);
                             this.sendGetUserProfileRequest();
                         } else {
                             this.toggleNotification("dangerNotification");
@@ -168,7 +169,8 @@ class SignIn extends React.Component {
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        this.props.history.push("/user-profile/" + data.userId);
+                        let userId = this.cipher(false, this.params.getSessionKey(), data.userId);
+                        this.props.history.push("/user-profile/" + userId);
                     });
                 } else {
                     this.toggleNotification("dangerNotification");

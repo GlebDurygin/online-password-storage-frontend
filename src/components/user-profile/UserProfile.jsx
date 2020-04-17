@@ -53,6 +53,9 @@ class UserProfile extends React.Component {
         dangerNotification: false
     };
 
+    cipher = require('../crypto/rc4');
+    params = require('../crypto/params');
+
     componentWillMount() {
         this.getUserProfile();
     }
@@ -101,10 +104,13 @@ class UserProfile extends React.Component {
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
+                        let username = this.cipher(false, this.params.getSessionKey(), data.username);
+                        let password = this.cipher(false, this.params.getSessionKey(), data.password);
+                        let keyword = this.cipher(false, this.params.getSessionKey(), data.keyword);
                         this.setState({
-                            usernameValue: data.username,
-                            passwordValue: data.password,
-                            keywordValue: data.keyword,
+                            usernameValue: username,
+                            passwordValue: password,
+                            keywordValue: keyword,
                             records: data.records
                         })
                     });
