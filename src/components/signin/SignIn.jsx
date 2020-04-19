@@ -71,10 +71,10 @@ class SignIn extends React.Component {
         });
     };
 
-    sendAuthorizationRequestToServer = () => {
+    sendAuthenticationRequestToServer = () => {
         let emphaticKeyAValues = this.srpService.computeEmphaticKeyA();
 
-        fetch('http://localhost:9080//sign-in-authorization', {
+        fetch('http://localhost:9080//sign-in-authentication', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -101,9 +101,9 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let authorizationKey = serverResponse.authorizationKey;
-        let salt = this.cipher(false, authorizationKey, serverResponse.salt);
-        let emphaticKeyB = this.cipher(false, authorizationKey, serverResponse.emphaticKeyB);
+        let authenticationKey = serverResponse.authenticationKey;
+        let salt = this.cipher(false, authenticationKey, serverResponse.salt);
+        let emphaticKeyB = this.cipher(false, authenticationKey, serverResponse.emphaticKeyB);
 
         let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA, emphaticKeyB);
         let privateKey = this.srpService.computePrivateKey(salt,
@@ -124,10 +124,10 @@ class SignIn extends React.Component {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization-Key': authorizationKey
+                'Authentication-Key': authenticationKey
             },
             body: JSON.stringify({
-                clientCheckValue: this.cipher(true, authorizationKey, clientCheckValue)
+                clientCheckValue: this.cipher(true, authenticationKey, clientCheckValue)
             })
         })
             .then(response => {
@@ -276,7 +276,7 @@ class SignIn extends React.Component {
                                             <CardFooter>
                                                 <Button className="btn-round" color="primary" size="lg"
                                                         onClick={e =>
-                                                            this.sendAuthorizationRequestToServer(e)
+                                                            this.sendAuthenticationRequestToServer(e)
                                                         }>
                                                     Sign in
                                                 </Button>
