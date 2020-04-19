@@ -340,8 +340,8 @@ class UserProfile extends React.Component {
                                                     <thead className="text-primary">
                                                     <tr>
                                                         <th className="header">HEADER</th>
-                                                        <th className="header">DATA</th>
                                                         <th className="header">DESCRIPTION</th>
+                                                        <th className="header">DATA</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
