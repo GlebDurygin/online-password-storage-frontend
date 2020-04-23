@@ -52,7 +52,7 @@ class UserProfile extends React.Component {
         dangerNotification: false
     };
 
-    cipher = require('../crypto/rc4');
+    cipher = require('../crypto/aes256');
     params = require('../crypto/params');
 
     componentWillMount() {

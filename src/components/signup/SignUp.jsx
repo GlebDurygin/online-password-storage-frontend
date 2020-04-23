@@ -35,7 +35,7 @@ class SignUp extends React.Component {
         dangerNotification: false
     };
 
-    cipher = require('../crypto/rc4');
+    aes256 = require('../crypto/aes256');
     params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
 
@@ -87,9 +87,9 @@ class SignUp extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.cipher(true, this.params.anonymousKey, this.state.usernameValue),
-                salt: this.cipher(true, this.params.anonymousKey, salt),
-                verifier: this.cipher(true, this.params.anonymousKey, verifier)
+                username: this.aes256(true, this.params.anonymousKey, this.state.usernameValue),
+                salt: this.aes256(true, this.params.anonymousKey, salt),
+                verifier: this.aes256(true, this.params.anonymousKey, verifier)
             }),
         })
             .then(response => {

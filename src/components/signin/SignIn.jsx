@@ -35,9 +35,9 @@ class SignIn extends React.Component {
         dangerNotification: false
     };
 
-    cipher = require('../crypto/rc4');
     params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
+    cipher = require('../crypto/aes256');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -102,6 +102,8 @@ class SignIn extends React.Component {
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
         let authenticationKey = serverResponse.authenticationKey;
+        //let a1 = this.cipher(true, authenticationKey, "username");
+        //let a2 = this.cipher(false, authenticationKey, a1);
         let salt = this.cipher(false, authenticationKey, serverResponse.salt);
         let emphaticKeyB = this.cipher(false, authenticationKey, serverResponse.emphaticKeyB);
 
