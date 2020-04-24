@@ -39,6 +39,7 @@ class SignIn extends React.Component {
     srpService = require('../crypto/SrpService');
     rsa = require('../crypto/rsa');
     aes256 = require('../crypto/aes256');
+    utils = require('../crypto/utils');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -74,6 +75,8 @@ class SignIn extends React.Component {
 
     sendAuthenticationRequestToServer = () => {
         let emphaticKeyAValues = this.srpService.computeEmphaticKeyA();
+        let dataKey = this.srpService.computeDataKey(this.state.usernameValue, this.state.passwordValue);
+        let usernameEncrypted = this.utils.byteArrayToHex(this.aes256(true, dataKey, this.state.usernameValue));
 
         fetch('http://localhost:9080//sign-in-authentication', {
             method: 'POST',
@@ -82,7 +85,7 @@ class SignIn extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.rsa(true, this.state.usernameValue),
+                username: this.rsa(true, usernameEncrypted),
                 emphaticKeyA: this.rsa(true, emphaticKeyAValues.emphaticKeyA)
             })
         })
@@ -94,27 +97,27 @@ class SignIn extends React.Component {
                 }
             })
             .then(serverResponse => {
-                this.sendCheckRequestToServer(emphaticKeyAValues, serverResponse);
+                this.sendCheckRequestToServer(emphaticKeyAValues, serverResponse, dataKey, usernameEncrypted);
             })
             .catch(error => {
                 this.toggleNotification("dangerNotification");
             })
     };
 
-    sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
+    sendCheckRequestToServer = (emphaticKeyAValues, serverResponse, dataKey, usernameEncrypted) => {
         let salt = this.rsa(false, serverResponse.salt);
         let authenticationKey = this.rsa(false, serverResponse.authenticationKey);
         let emphaticKeyB = this.rsa(false, serverResponse.emphaticKeyB);
 
         let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA, emphaticKeyB);
         let privateKey = this.srpService.computePrivateKey(salt,
-            this.state.usernameValue,
+            usernameEncrypted,
             this.state.passwordValue);
         let sessionKey = this.srpService.computeSessionKey(emphaticKeyB,
             emphaticKeyAValues.randomA,
             privateKey,
             maskValue);
-        let clientCheckValue = this.srpService.computeClientCheckValue(this.state.usernameValue,
+        let clientCheckValue = this.srpService.computeClientCheckValue(usernameEncrypted,
             salt,
             emphaticKeyAValues.emphaticKeyA.toString(),
             emphaticKeyB,
@@ -145,6 +148,7 @@ class SignIn extends React.Component {
                             let sessionId = this.srpService.computeSessionId(clientCheckValue, computedServerCheckValue, sessionKey);
                             this.params.setSessionId(sessionId);
                             this.params.setSessionKey(sessionKey);
+                            this.params.setDataKey(dataKey);
                             this.sendGetUserProfileRequest();
                         } else {
                             this.toggleNotification("dangerNotification");

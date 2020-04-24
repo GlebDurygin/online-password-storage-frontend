@@ -23,9 +23,13 @@ function computeMaskValue(emphaticKeyA, emphaticKeyB) {
     return hash(A.toString(), B.toString());
 }
 
-function computePrivateKey(salt, username, password) {
+function computeDataKey(username, password) {
     let usernameWithPassword = username + " : " + password;
-    let usernameWithPasswordHash = hash(usernameWithPassword);
+    return hash(usernameWithPassword);
+}
+
+function computePrivateKey(salt, username, password) {
+    let usernameWithPasswordHash = computeDataKey(username, password);
     return hash(salt, usernameWithPasswordHash);
 }
 
@@ -82,5 +86,6 @@ module.exports = {
     computeServerCheckValue: computeServerCheckValue,
     computeSalt: computeSalt,
     computeVerifier: computeVerifier,
-    computeSessionId: computeSessionId
+    computeSessionId: computeSessionId,
+    computeDataKey: computeDataKey
 }

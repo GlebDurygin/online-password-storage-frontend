@@ -39,6 +39,7 @@ class SignUp extends React.Component {
     rsa = require('../crypto/rsa');
     params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
+    utils = require('../crypto/utils');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -79,8 +80,10 @@ class SignUp extends React.Component {
     };
 
     sendRequestToServer = () => {
+        let dataKey = this.srpService.computeDataKey(this.state.usernameValue, this.state.passwordValue);
+        let usernameEncrypted = this.utils.byteArrayToHex(this.aes256(true, dataKey, this.state.usernameValue));
         let salt = this.srpService.computeSalt();
-        let verifier = this.srpService.computeVerifier(salt, this.state.usernameValue, this.state.passwordValue);
+        let verifier = this.srpService.computeVerifier(salt, usernameEncrypted, this.state.passwordValue);
         fetch('http://localhost:9080/sign-up', {
             method: 'POST',
             headers: {
@@ -88,7 +91,7 @@ class SignUp extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.rsa(true, this.state.usernameValue),
+                username: this.rsa(true, usernameEncrypted),
                 salt: this.rsa(true, salt),
                 verifier: this.rsa(true, verifier)
             }),

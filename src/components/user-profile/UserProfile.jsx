@@ -102,7 +102,8 @@ class UserProfile extends React.Component {
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        let username = this.aes256(false, this.params.getSessionKey(), data.username);
+                        let usernameEncrypted = this.aes256(false, this.params.getSessionKey(), data.username);
+                        let username = this.aes256(false, this.params.getDataKey(), usernameEncrypted);
                         this.setState({
                             usernameValue: username,
                             records: data.records

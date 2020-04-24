@@ -20,21 +20,30 @@ const input = {
 }
 let sessionKey = '';
 let sessionId = '';
+let dataKey = '';
 
 function setSessionKey(key) {
-  sessionKey = key;
+    sessionKey = key;
 }
 
 function getSessionKey() {
-  return sessionKey;
+    return sessionKey;
 }
 
 function setSessionId(id) {
-  sessionId = id;
+    sessionId = id;
 }
 
 function getSessionId() {
-  return sessionId;
+    return sessionId;
+}
+
+function setDataKey(key) {
+    dataKey = key;
+}
+
+function getDataKey() {
+    return dataKey;
 }
 
 // N    A large safe prime (N = 2q+1, where q is prime)
@@ -49,3 +58,5 @@ exports.setSessionKey = setSessionKey
 exports.getSessionKey = getSessionKey
 exports.setSessionId = setSessionId
 exports.getSessionId = getSessionId
+exports.setDataKey = setDataKey
+exports.getDataKey = getDataKey
