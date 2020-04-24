@@ -37,7 +37,6 @@ class SignUp extends React.Component {
 
     aes256 = require('../crypto/aes256');
     rsa = require('../crypto/rsa');
-    params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
     utils = require('../crypto/utils');
 

@@ -95,9 +95,9 @@ class UserProfile extends React.Component {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Session-Id': this.params.getSessionId()
-            }
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         })
             .then(response => {
                 if (response.ok) {

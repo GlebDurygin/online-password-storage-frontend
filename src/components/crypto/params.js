@@ -15,11 +15,10 @@ const input = {
     9E4AFF73
   `,
     generatorModulo: '02',
-    authenticationKeyHeader: 'Authentication-Key',
-    sessionIdHeader: 'Session-Id'
+    authenticationSessionIdCookie: 'AUTHENTICATION_SESSION_ID',
+    sessionIdCookie: 'SESSION_ID'
 }
 let sessionKey = '';
-let sessionId = '';
 let dataKey = '';
 
 function setSessionKey(key) {
@@ -28,14 +27,6 @@ function setSessionKey(key) {
 
 function getSessionKey() {
     return sessionKey;
-}
-
-function setSessionId(id) {
-    sessionId = id;
-}
-
-function getSessionId() {
-    return sessionId;
 }
 
 function setDataKey(key) {
@@ -52,11 +43,9 @@ function getDataKey() {
 exports.N = bigInt(input.largeSafePrime.replace(/\s+/g, ''), 16)
 exports.g = bigInt(input.generatorModulo.replace(/\s+/g, ''), 16)
 exports.K = bigInt(hash(exports.N.toString(), exports.g.toString()), 16)
-exports.authenticationKeyHeader = input.authenticationKeyHeader
-exports.sessionIdHeader = input.sessionIdHeader
+exports.authenticationSessionIdCookie = input.authenticationSessionIdCookie
+exports.sessionIdCookie = input.sessionIdCookie
 exports.setSessionKey = setSessionKey
 exports.getSessionKey = getSessionKey
-exports.setSessionId = setSessionId
-exports.getSessionId = getSessionId
 exports.setDataKey = setDataKey
 exports.getDataKey = getDataKey

@@ -87,7 +87,8 @@ class SignIn extends React.Component {
             body: JSON.stringify({
                 username: this.rsa(true, usernameEncrypted),
                 emphaticKeyA: this.rsa(true, emphaticKeyAValues.emphaticKeyA)
-            })
+            }),
+            credentials: "include"
         })
             .then(response => {
                 if (response.ok) {
@@ -106,7 +107,6 @@ class SignIn extends React.Component {
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse, dataKey, usernameEncrypted) => {
         let salt = this.rsa(false, serverResponse.salt);
-        let authenticationKey = this.rsa(false, serverResponse.authenticationKey);
         let emphaticKeyB = this.rsa(false, serverResponse.emphaticKeyB);
 
         let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA, emphaticKeyB);
@@ -127,12 +127,12 @@ class SignIn extends React.Component {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authentication-Key': authenticationKey
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 clientCheckValue: this.rsa(true, clientCheckValue)
-            })
+            }),
+            credentials: 'include'
         })
             .then(response => {
                 if (response.ok) {
@@ -146,9 +146,11 @@ class SignIn extends React.Component {
 
                         if (computedServerCheckValue === serverCheckValue) {
                             let sessionId = this.srpService.computeSessionId(clientCheckValue, computedServerCheckValue, sessionKey);
-                            this.params.setSessionId(sessionId);
                             this.params.setSessionKey(sessionKey);
                             this.params.setDataKey(dataKey);
+
+                            this.props.cookies.set(this.params.sessionIdCookie, sessionId, {path: '/'});
+
                             this.sendGetUserProfileRequest();
                         } else {
                             this.toggleNotification("dangerNotification");
@@ -168,9 +170,9 @@ class SignIn extends React.Component {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Session-Id': this.params.getSessionId()
-            }
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
         })
             .then(response => {
                 if (response.ok) {
