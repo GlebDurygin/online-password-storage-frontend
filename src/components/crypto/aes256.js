@@ -1,6 +1,7 @@
 let crypto = require('crypto');
+let utils = require('./utils');
 module.exports = function aes256(forEncryption, key, text) {
-    let keyBytes = hexToBytes(key);
+    let keyBytes = utils.hexToBytes(key);
 
     if (forEncryption) {
         let cipher = crypto.createCipheriv('aes-256-ecb', keyBytes, '');
@@ -16,50 +17,11 @@ module.exports = function aes256(forEncryption, key, text) {
         let decipher = crypto.createDecipheriv('aes-256-ecb', keyBytes, '');
         decipher.setAutoPadding(false);
 
-        text = hexToBytes(text);
+        text = utils.hexToBytes(text);
         let buffer = Buffer.from(text);
         let decrypted = decipher.update(buffer);
-        return bin2String(removePadding(decrypted));
+        return utils.bin2String(removePadding(decrypted));
     }
-}
-
-function bin2String(array) {
-    let result = "";
-    for (let i = 0; i < array.length; i++) {
-        result += String.fromCharCode(array[i]);
-    }
-    return result;
-}
-
-function hexToBytes(hex) {
-    let bytes = [];
-    let c = 0;
-    let signum = 1;
-    if (hex.charAt(c) === '-') {
-        c += 1;
-        signum = -1;
-    }
-
-    while (c < hex.length) {
-        let number;
-        if (signum === -1) {
-            if (c !== (hex.length - 2)) {
-                number = 255 - parseInt(hex.substr(c, 2), 16);
-            } else {
-                number = 256 - parseInt(hex.substr(c, 2), 16);
-            }
-        } else {
-            number = parseInt(hex.substr(c, 2), 16);
-        }
-        if (number > 127) {
-            number -= 256;
-        }
-
-        c += 2;
-
-        bytes.push(number);
-    }
-    return bytes;
 }
 
 function addPadding(text) {

@@ -1,4 +1,5 @@
 let crypto = require('crypto');
+let utils = require('./utils');
 const params = {
     serverPrivateKey: '-----BEGIN RSA PRIVATE KEY-----' +
         'MIICXQIBAAKBgQDehpUl0m636SM6soC1P6x56pePSdBnhVs2dnxbtJR9kl0kwOFF' +
@@ -41,7 +42,7 @@ module.exports = function aes256(forEncryption, text) {
 
         return result;
     } else {
-        let buffer = Buffer.from(hexToBytes(text));
+        let buffer = Buffer.from(utils.hexToBytes(text));
         let arrays = sliceArray(buffer, 128);
         for (let i = 0; i < arrays.length; i++) {
             let cipherText = crypto.privateDecrypt({
@@ -53,7 +54,7 @@ module.exports = function aes256(forEncryption, text) {
             cipherText = removeEmptyBytes(cipherText);
             result = Array.prototype.concat(result, Array.from(cipherText));
         }
-        return bin2String(result);
+        return utils.bin2String(result);
     }
 }
 
@@ -71,45 +72,6 @@ function sliceArray(array, blockLength) {
         arrays[i] = array.subarray(i * blockLength, i * blockLength + arrayLength);
     }
     return arrays;
-}
-
-function bin2String(array) {
-    let result = "";
-    for (let i = 0; i < array.length; i++) {
-        result += String.fromCharCode(array[i]);
-    }
-    return result;
-}
-
-function hexToBytes(hex) {
-    let bytes = [];
-    let c = 0;
-    let signum = 1;
-    if (hex.charAt(c) === '-') {
-        c += 1;
-        signum = -1;
-    }
-
-    while (c < hex.length) {
-        let number;
-        if (signum === -1) {
-            if (c !== (hex.length - 2)) {
-                number = 255 - parseInt(hex.substr(c, 2), 16);
-            } else {
-                number = 256 - parseInt(hex.substr(c, 2), 16);
-            }
-        } else {
-            number = parseInt(hex.substr(c, 2), 16);
-        }
-        if (number > 127) {
-            number -= 256;
-        }
-
-        c += 2;
-
-        bytes.push(number);
-    }
-    return bytes;
 }
 
 function removeEmptyBytes(array) {
