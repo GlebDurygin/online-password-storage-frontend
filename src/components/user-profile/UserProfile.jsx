@@ -35,7 +35,6 @@ class UserProfile extends React.Component {
         squares7and8: "",
 
         usernameValue: "",
-        passwordValue: "",
         records: [],
 
         modal: {
@@ -104,10 +103,8 @@ class UserProfile extends React.Component {
                 if (response.ok) {
                     response.json().then(data => {
                         let username = this.aes256(false, this.params.getSessionKey(), data.username);
-                        let password = this.aes256(false, this.params.getSessionKey(), data.password);
                         this.setState({
                             usernameValue: username,
-                            passwordValue: password,
                             records: data.records
                         })
                     });
@@ -289,27 +286,6 @@ class UserProfile extends React.Component {
                                                                     usernameValue: e.target.value
                                                                 })
                                                             }
-                                                        />
-                                                    </InputGroup>
-                                                    <InputGroup
-                                                        className={classnames({
-                                                            "input-group-focus": this.state.passwordFocus
-                                                        })}
-                                                    >
-                                                        <InputGroupAddon addonType="prepend">
-                                                            <InputGroupText>
-                                                                <i className="tim-icons icon-lock-circle"/>
-                                                            </InputGroupText>
-                                                        </InputGroupAddon>
-                                                        <Input
-                                                            placeholder="Password"
-                                                            type="password"
-                                                            defaultValue={this.state.passwordValue}
-                                                            onFocus={e => this.setState({passwordFocus: true})}
-                                                            onBlur={e => this.setState({
-                                                                passwordFocus: false,
-                                                                passwordValue: e.target.value
-                                                            })}
                                                         />
                                                     </InputGroup>
                                                 </Form>
@@ -496,7 +472,7 @@ class UserProfile extends React.Component {
                             <FormGroup>
                                 <InputGroup
                                     className={classnames("input-group-alternative", {
-                                        "input-group-focus": this.state.passwordModalFocus
+                                        "input-group-focus": this.state.dataModalFocus
                                     })}
                                 >
                                     <InputGroupAddon addonType="prepend">
@@ -505,10 +481,10 @@ class UserProfile extends React.Component {
                                         </InputGroupText>
                                     </InputGroupAddon>
                                     <Input
-                                        placeholder="Password"
+                                        placeholder="Data"
                                         type="text"
                                         defaultValue={this.state.modal.data}
-                                        onFocus={e => this.setState({passwordModalFocus: true})}
+                                        onFocus={e => this.setState({dataModalFocus: true})}
                                         onBlur={e => this.setState({
                                             dataModalFocus: false,
                                             modal: {
