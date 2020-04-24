@@ -37,7 +37,8 @@ class SignIn extends React.Component {
 
     params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
-    cipher = require('../crypto/aes256');
+    rsa = require('../crypto/rsa');
+    aes256 = require('../crypto/aes256');
 
     componentDidMount() {
         document.body.classList.toggle("register-page");
@@ -81,8 +82,8 @@ class SignIn extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.cipher(true, this.params.anonymousKey, this.state.usernameValue),
-                emphaticKeyA: this.cipher(true, this.params.anonymousKey, emphaticKeyAValues.emphaticKeyA)
+                username: this.rsa(true, this.state.usernameValue),
+                emphaticKeyA: this.rsa(true, emphaticKeyAValues.emphaticKeyA)
             })
         })
             .then(response => {
@@ -101,11 +102,9 @@ class SignIn extends React.Component {
     };
 
     sendCheckRequestToServer = (emphaticKeyAValues, serverResponse) => {
-        let authenticationKey = serverResponse.authenticationKey;
-        //let a1 = this.cipher(true, authenticationKey, "username");
-        //let a2 = this.cipher(false, authenticationKey, a1);
-        let salt = this.cipher(false, authenticationKey, serverResponse.salt);
-        let emphaticKeyB = this.cipher(false, authenticationKey, serverResponse.emphaticKeyB);
+        let salt = this.rsa(false, serverResponse.salt);
+        let authenticationKey = this.rsa(false, serverResponse.authenticationKey);
+        let emphaticKeyB = this.rsa(false, serverResponse.emphaticKeyB);
 
         let maskValue = this.srpService.computeMaskValue(emphaticKeyAValues.emphaticKeyA, emphaticKeyB);
         let privateKey = this.srpService.computePrivateKey(salt,
@@ -129,19 +128,21 @@ class SignIn extends React.Component {
                 'Authentication-Key': authenticationKey
             },
             body: JSON.stringify({
-                clientCheckValue: this.cipher(true, authenticationKey, clientCheckValue)
+                clientCheckValue: this.rsa(true, clientCheckValue)
             })
         })
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        let serverCheckValue = this.srpService.computeServerCheckValue(
+                        let computedServerCheckValue = this.srpService.computeServerCheckValue(
                             emphaticKeyAValues.emphaticKeyA.toString(),
                             clientCheckValue,
                             sessionKey);
 
-                        if (serverCheckValue === data.serverCheckValue) {
-                            let sessionId = this.srpService.computeSessionId(clientCheckValue, serverCheckValue, sessionKey);
+                        let serverCheckValue = this.rsa(false, data.serverCheckValue);
+
+                        if (computedServerCheckValue === serverCheckValue) {
+                            let sessionId = this.srpService.computeSessionId(clientCheckValue, computedServerCheckValue, sessionKey);
                             this.params.setSessionId(sessionId);
                             this.params.setSessionKey(sessionKey);
                             this.sendGetUserProfileRequest();
@@ -170,7 +171,7 @@ class SignIn extends React.Component {
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        let userId = this.cipher(false, this.params.getSessionKey(), data.userId);
+                        let userId = this.aes256(false, this.params.getSessionKey(), data.userId);
                         this.props.history.push("/user-profile/" + userId);
                     });
                 } else {

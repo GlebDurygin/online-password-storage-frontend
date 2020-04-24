@@ -36,6 +36,7 @@ class SignUp extends React.Component {
     };
 
     aes256 = require('../crypto/aes256');
+    rsa = require('../crypto/rsa');
     params = require('../crypto/params');
     srpService = require('../crypto/SrpService');
 
@@ -87,9 +88,9 @@ class SignUp extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: this.aes256(true, this.params.anonymousKey, this.state.usernameValue),
-                salt: this.aes256(true, this.params.anonymousKey, salt),
-                verifier: this.aes256(true, this.params.anonymousKey, verifier)
+                username: this.rsa(true, this.state.usernameValue),
+                salt: this.rsa(true, salt),
+                verifier: this.rsa(true, verifier)
             }),
         })
             .then(response => {

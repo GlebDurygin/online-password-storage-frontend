@@ -52,7 +52,7 @@ class UserProfile extends React.Component {
         dangerNotification: false
     };
 
-    cipher = require('../crypto/aes256');
+    aes256 = require('../crypto/aes256');
     params = require('../crypto/params');
 
     componentWillMount() {
@@ -103,8 +103,8 @@ class UserProfile extends React.Component {
             .then(response => {
                 if (response.ok) {
                     response.json().then(data => {
-                        let username = this.cipher(false, this.params.getSessionKey(), data.username);
-                        let password = this.cipher(false, this.params.getSessionKey(), data.password);
+                        let username = this.aes256(false, this.params.getSessionKey(), data.username);
+                        let password = this.aes256(false, this.params.getSessionKey(), data.password);
                         this.setState({
                             usernameValue: username,
                             passwordValue: password,
