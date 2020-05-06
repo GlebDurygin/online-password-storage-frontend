@@ -79,7 +79,7 @@ class SignUp extends React.Component {
     };
 
     sendRequestToServer = () => {
-        let dataKey = this.srpService.computeDataKey(this.state.usernameValue, this.state.passwordValue);
+        let dataKey = this.srpService.computeDataKey(this.state.passwordValue);
         let usernameEncrypted = this.utils.byteArrayToHex(this.aes256(true, dataKey, this.state.usernameValue));
         let salt = this.srpService.computeSalt();
         let verifier = this.srpService.computeVerifier(salt, usernameEncrypted, this.state.passwordValue);

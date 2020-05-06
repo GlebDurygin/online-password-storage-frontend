@@ -75,7 +75,7 @@ class SignIn extends React.Component {
 
     sendAuthenticationRequestToServer = () => {
         let emphaticKeyAValues = this.srpService.computeEmphaticKeyA();
-        let dataKey = this.srpService.computeDataKey(this.state.usernameValue, this.state.passwordValue);
+        let dataKey = this.srpService.computeDataKey(this.state.passwordValue);
         let usernameEncrypted = this.utils.byteArrayToHex(this.aes256(true, dataKey, this.state.usernameValue));
 
         fetch('http://localhost:9080//sign-in-authentication', {

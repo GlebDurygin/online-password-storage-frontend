@@ -23,9 +23,8 @@ function computeMaskValue(emphaticKeyA, emphaticKeyB) {
     return hash(A.toString(), B.toString());
 }
 
-function computeDataKey(username, password) {
-    let usernameWithPassword = username + " : " + password;
-    return hash(usernameWithPassword);
+function computeDataKey(password) {
+    return hash(password);
 }
 
 function computePrivateKey(salt, username, password) {
