@@ -182,7 +182,7 @@ class UserProfile extends React.Component {
 
     deleteRecord = (index) => {
         let records = this.state.records;
-        records.slice(index, 1);
+        records.splice(index, 1);
         this.setState({
             records: records
         })
