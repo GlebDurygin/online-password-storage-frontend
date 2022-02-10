@@ -9,7 +9,7 @@
     "big-integer": "^1.6.48",
     "classnames": "^2.2.6",
     "crypto-random-hex": "^1.0.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "random-bytes": "^1.0.0",
     "react": "^16.13.0",
     "react-cookie": "^4.0.3",
